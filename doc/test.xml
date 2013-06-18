@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<header class="ui-helper-clearfix">
+	<h1>
+		<img alt="ApiScol" src="/aps_admin/img/logo-api.png" />
+		ApiScol - La
+		banque de ressources numériques scolaires
+	</h1>
+	<div class="status-bar ui-state-default ui-helper-clearfix">
+		<span class="status content">2971 ressources (121 séquences)</span>
+		<span class="status connexion">Gérard Dupont</span>
+	</div>
+	<nav>
+		<ul class="menu ui-state-active ui-corner-all">
+			<li class="menu-item" id="menu_item_principal_home">
+				<a href="/aps_admin/home">Accueil</a>
+				<li class="menu-item current ui-state-focus" id="menu_item_principal_resources">
+					<a href="">Ressources</a>
+					<ul class="ui-state-active">
+						<li class="sub-menu-item current " id="menu_item_secondaire_list">
+							<a href="/aps_admin/resources/list">Liste</a>
+						</li>
+						<li class="sub-menu-item" id="menu_item_secondaire_folder">
+							<a href="/aps_admin/resources/folder">Dossiers</a>
+						</li>
+				</li>
+		</ul>
+		<li class="menu-item" id="menu_item_principal_add">
+			<a href="">Ajout</a>
+			<li class="menu-item" id="menu_item_principal_alerts">
+				<a href="">Alertes</a>
+				<li class="menu-item" id="menu_item_principal_services">
+					<a href="">Services</a>
+					<li class="menu-item" id="menu_item_principal_preferences">
+						<a href="">Preferences</a>
+						<li class="menu-item" id="menu_item_principal_utilisateurs">
+							<a href="">Utilisateurs</a>
+							<li class="menu-item" id="menu_item_principal_stats">
+								<a href="">Statistiques</a>
+							</ul>
+	</nav>
+</header>

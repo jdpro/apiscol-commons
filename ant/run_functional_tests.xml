@@ -1,0 +1,145 @@
+<?xml version="1.0"?>
+<!DOCTYPE project>
+<project default="main" basedir="../.." name="Exécution des tests fonctionnels">
+	<taskdef name="if" classname="net.sf.antcontrib.logic.IfTask" />
+	<property name="configs.dir" value="${basedir}/ApiScol_Commons/ant/configs" />
+	<property name="tests.dir" value="${basedir}/ApiScol_Tests" />
+	<property name="tests.src.dir" value="${tests.dir}/src" />
+	<property name="tests.lib.dir" value="${tests.dir}/libs" />
+	<property name="tests.bin.dir" value="${tests.dir}/bin" />
+	<property name="tests.data.dir" value="${tests.dir}/data/" />
+	<property name="tests.reports.dir" value="${tests.dir}/reports" />
+	<property name="run-tests" value="true" />
+	<property name="delete.all.contents" value="false" />
+	<path id="compilation.path">
+		<fileset dir="${tests.lib.dir}">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+
+	<target name="main">
+		<loadproperties srcfile="${configs.dir}/${deploy.target}.deploy.tokens.properties">
+		</loadproperties>
+		<javac srcdir="${tests.src.dir}" destdir="${tests.bin.dir}" includeantruntime="false">
+			<classpath>
+				<path refid="compilation.path">
+				</path>
+			</classpath>
+		</javac>
+		<delete includeemptydirs="true">
+			<fileset dir="${tests.reports.dir}" includes="**/*" />
+		</delete>
+		<if>
+			<equals arg1="${run-tests-gp1}" arg2="true" />
+			<then>
+				<antcall target="run_tests">
+					<param name="grp.name" value="gp1" />
+				</antcall>
+			</then>
+			<else>
+				<echo>Functionnal tests - group 1 will not be runned</echo>
+			</else>
+		</if>
+		<if>
+			<equals arg1="${run-tests-gp2}" arg2="true" />
+			<then>
+				<antcall target="run_tests">
+					<param name="grp.name" value="gp2" />
+				</antcall>
+			</then>
+			<else>
+				<echo>Functionnal tests - group 2 will not be runned</echo>
+			</else>
+		</if>
+		<if>
+			<equals arg1="${run-tests-gp3}" arg2="true" />
+			<then>
+				<antcall target="run_tests">
+					<param name="grp.name" value="gp3" />
+				</antcall>
+			</then>
+			<else>
+				<echo>Functionnal tests - group 3 will not be runned</echo>
+			</else>
+		</if>
+		<if>
+			<equals arg1="${run-tests-gp4}" arg2="true" />
+			<then>
+				<antcall target="run_tests">
+					<param name="grp.name" value="gp4" />
+				</antcall>
+			</then>
+			<else>
+				<echo>Functionnal tests - group 4 will not be runned</echo>
+			</else>
+		</if>
+		<if>
+			<equals arg1="${run-tests-gp5}" arg2="true" />
+			<then>
+				<antcall target="run_tests">
+					<param name="grp.name" value="gp5" />
+				</antcall>
+			</then>
+			<else>
+				<echo>Functionnal tests - group 5 will not be runned</echo>
+			</else>
+		</if>
+		<if>
+			<equals arg1="${run-tests-gp6}" arg2="true" />
+			<then>
+				<antcall target="run_tests">
+					<param name="grp.name" value="gp6" />
+				</antcall>
+			</then>
+			<else>
+				<echo>Functionnal tests - group 6 will not be runned</echo>
+			</else>
+		</if>
+		<if>
+			<equals arg1="${run-tests-gp7}" arg2="true" />
+			<then>
+				<antcall target="run_tests">
+					<param name="grp.name" value="gp7" />
+				</antcall>
+			</then>
+			<else>
+				<echo>Functionnal tests - group 7 will not be runned</echo>
+			</else>
+		</if>
+		<if>
+			<equals arg1="${run-tests-gp8}" arg2="true" />
+			<then>
+				<antcall target="run_tests">
+					<param name="grp.name" value="gp8" />
+				</antcall>
+			</then>
+			<else>
+				<echo>Functionnal tests - group 8 will not be runned</echo>
+			</else>
+		</if>
+	</target>
+	<target name="run_tests">
+		<junit haltonerror="false" haltonfailure="false" fork="" showoutput="true">
+			<sysproperty key="meta.ws.url" value="${apiscol_meta_host}" />
+			<sysproperty key="edit.ws.url" value="${apiscol_edit_host}" />
+			<sysproperty key="content.ws.url" value="${apiscol_content_host}" />
+			<sysproperty key="pack.ws.url" value="${apiscol_pack_host}" />
+			<sysproperty key="thumbs.ws.url" value="${apiscol_thumbs_host}" />
+			<sysproperty key="tests.data.dir" value="${tests.data.dir}" />
+			<sysproperty key="delete.all.contents" value="${delete.all.contents}" />
+			<classpath>
+				<fileset dir="${tests.lib.dir}">
+					<include name="*.jar" />
+				</fileset>
+				<pathelement location="${tests.bin.dir}" />
+			</classpath>
+			<batchtest todir="${tests.reports.dir}">
+				<fileset dir="${tests.src.dir}" includes="**/${grp.name}/*.java" excludes="ApiScolTests.java" />
+				<formatter type="plain" />
+				<formatter type="xml" />
+
+			</batchtest>
+		</junit>
+		<sleep seconds="45" />
+	</target>
+</project>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<local-parameters>
+	<apiscol_instance_name>example-dev</apiscol_instance_name>
+	<apiscol_instance_label>Example de dépôt de ressources - développement
+	</apiscol_instance_label>
+	<directories>
+		<resources>/home/resources</resources>
+		<thumbs>/home/thumbs</thumbs>
+		<meta>/home/meta</meta>
+		<manifests>/home/manifests</manifests>
+		<previews>/home/previews</previews>
+		<conversions-input>/home/input</conversions-input>
+		<conversions-output>/home/output</conversions-output>
+	</directories>
+	<solr>
+		<deploy_host>http://localhost:8080</deploy_host>
+		<host_user></host_user>
+		<resources_core_host>http://localhost:8080/solr/apiscol-resources
+		</resources_core_host>
+		<metadata_core_host>http://localhost:8080/solr/apiscol-metadata
+		</metadata_core_host>
+	</solr>
+	<test_display>
+		<deploy_host>http://localhost:8080</deploy_host>
+		<host_user>jdornbusch</host_user>
+	</test_display>
+</local-parameters>

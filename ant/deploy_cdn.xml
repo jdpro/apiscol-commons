@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<!DOCTYPE project>
+<project default="end" basedir="../..">
+	<taskdef name="deploy" classname="org.apache.catalina.ant.DeployTask" />
+	<taskdef name="undeploy" classname="org.apache.catalina.ant.UndeployTask" />
+	<taskdef name="if" classname="net.sf.antcontrib.logic.IfTask" />
+	<property name="passwords.dir" value="${basedir}/deploy" />
+	<loadproperties srcFile="${passwords.dir}/properties.common" />
+	<property name="jquery.apiscol.dir" value="${basedir}/ApiScol_Display/apiscol.0.0.0" />
+	<property name="jquery.apiscol.temp.dir" value="${basedir}/ApiScol_Display/temp" />
+	<property name="jquery.apiscol.file" value="${jquery.apiscol.dir}/js/jquery.apiscol.js" />
+	<property name="jquery.apiscol.file.temp" value="${jquery.apiscol.temp.dir}/js/jquery.apiscol.js" />
+	<property name="xslt.file" value="${basedir}/ApiScol_Meta/WebContent/xsl/metadataXMLToHTMLTransformer.xsl" />
+	<property name="xslt.file.temp" value="${xslt.file}.temp" />
+	<property name="js.pattern" value="var xsl\s?=\s?&#34;.*&#34;" />
+	<property name="version.pattern" value="version-token" />
+	<property name="local.cdn.dir" value="${basedir}/ApiScol_CDN" />
+	<property name="configs.dir" value="${basedir}/ApiScol_Commons/ant/configs" />
+	<xmlproperty file="${configs.dir}/${deploy.target}.deploy.xml" keeproot="true" />
+	<input message="Dispatch xslt file to jquery-apiscol ?" validargs="true,false" addproperty="deploy-cdn" defaultvalue="true" />
+	<input message="Choose dev, demo, test or prod :" validargs="dev,demo,gandi,test,prod" addproperty="deploy.target" defaultvalue="dev" />
+	<target name="ftp-cdn">
+		<if>
+			<equals arg1="${deploy-cdn}" arg2="true" />
+			<then>
+				<ftp action="mkdir" verbose="false" server="${cdn.host}" port="21" remotedir="cdn/${parameters.version}" userid="${cdn.user}" password="${cdn.password}" passive="yes" depends="yes" />
+
+				<ftp verbose="false" server="${cdn.host}" port="21" remotedir="cdn" userid="${cdn.user}" password="${cdn.password}" passive="yes" depends="yes">
+					<fileset dir="${local.cdn.dir}" excludes="**/jquery.apiscol.js*">
+					</fileset>
+				</ftp>
+				<ftp verbose="false" server="${cdn.host}" port="21" remotedir="cdn/${parameters.version}" userid="${cdn.user}" password="${cdn.password}" passive="yes" depends="yes">
+					<fileset dir="${jquery.apiscol.dir}" excludes="**/jquery.apiscol.js*">
+					</fileset>
+				</ftp>
+			</then>
+		</if>
+	</target>
+	<target name="prepare-jquery-apiscol-transfer" depends="ftp-cdn">
+		<mkdir dir="${jquery.apiscol.temp.dir}" />
+		<if>
+			<equals arg1="${deploy-cdn}" arg2="true" />
+			<then>
+				<echo message="Copying xslt in jquery apiscol file" />
+				<copy file="${xslt.file}" tofile="${xslt.file.temp}" overwrite="true" />
+				<copy file="${jquery.apiscol.file}" tofile="${jquery.apiscol.file.temp}" overwrite="true" />
+				<replaceregexp file="${xslt.file.temp}" match='[\n\r]' flags="gi" replace=" ">
+				</replaceregexp>
+				<replaceregexp file="${xslt.file.temp}" match='\\' flags="gi" replace='\\\\\\\\'>
+				</replaceregexp>
+				<replaceregexp file="${xslt.file.temp}" match='["]' flags="gi" replace="\\\\&#34;">
+								</replaceregexp>
+								<replaceregexp file="${xslt.file.temp}" match='\\' flags="gi" replace='\\\\\\\\'>
+												</replaceregexp>
+								<replaceregexp file="${xslt.file.temp}" match='\\' flags="gi" replace='\\\\\\\\'>
+												</replaceregexp>
+								<loadfile property="xsl" srcfile="${xslt.file.temp}">
+								</loadfile>
+								<delete file="${xslt.file.temp}">
+								</delete>		
+								<property name="jsline" value="var xsl=&#34;${xsl}&#34;"></property>
+									<replaceregexp file="${jquery.apiscol.file.temp}" match="${js.pattern}" replace="${jsline}"></replaceregexp>
+									<replaceregexp file="${jquery.apiscol.file.temp}" match="${version.pattern}" replace="${parameters.version}"></replaceregexp>
+					</then>
+				</if>
+		
+	</target>
+	<target name="transfer-jquery-apiscol" depends="prepare-jquery-apiscol-transfer">
+		<if>
+			<equals arg1="${deploy-cdn}" arg2="true" />
+			<then>
+				<echo message="Transfering jquery apiscol file" />
+			<ftp verbose="false" server="${cdn.host}" port="21" remotedir="/cdn/${parameters.version}/js" userid="${cdn.user}" password="${cdn.password}" passive="yes" depends="yes">
+				<fileset file="${jquery.apiscol.file.temp}"></fileset>
+			</ftp>
+				</then>
+		</if>
+		</target>
+
+
+	<target name="end" depends="transfer-jquery-apiscol">
+		<if>
+			<equals arg1="${deploy-cdn}" arg2="true" />
+			<then>
+				<delete dir="${jquery.apiscol.temp.dir}" />
+				</then>
+		</if>
+		
+	</target>
+</project>

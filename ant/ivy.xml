@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.0" xmlns:m="http://ant.apache.org/ivy/maven">
+	<info organisation="org.apache.tika" module="tika-parsers" revision="1.3" status="release" publication="20130613134412">
+		<description homepage="http://tika.apache.org/"/>
+		<m:dependency.management__junit__junit__scope>test</m:dependency.management__junit__junit__scope>
+		<m:properties__organization.logo>http://www.apache.org/images/asf_logo_wide.gif</m:properties__organization.logo>
+		<m:properties__project.reporting.outputEncoding>${project.build.sourceEncoding}</m:properties__project.reporting.outputEncoding>
+		<m:properties__distMgmtSnapshotsName>Apache Development Snapshot Repository</m:properties__distMgmtSnapshotsName>
+		<m:dependency.management__biz.aQute__bndlib__version>1.43.0</m:dependency.management__biz.aQute__bndlib__version>
+		<m:properties__maven.compile.target>1.5</m:properties__maven.compile.target>
+		<m:properties__vorbis.version>0.1</m:properties__vorbis.version>
+		<m:properties__maven.compile.source>1.5</m:properties__maven.compile.source>
+		<m:properties__distMgmtSnapshotsUrl>https://repository.apache.org/content/repositories/snapshots</m:properties__distMgmtSnapshotsUrl>
+		<m:properties__sourceReleaseAssemblyDescriptor>source-release</m:properties__sourceReleaseAssemblyDescriptor>
+		<m:properties__poi.version>3.8</m:properties__poi.version>
+		<m:dependency.management__org.apache.felix__org.apache.felix.scr.annotations__version>1.6.0</m:dependency.management__org.apache.felix__org.apache.felix.scr.annotations__version>
+		<m:properties__project.build.sourceEncoding>UTF-8</m:properties__project.build.sourceEncoding>
+		<m:properties__codec.version>1.5</m:properties__codec.version>
+		<m:dependency.management__junit__junit__version>4.10</m:dependency.management__junit__junit__version>
+		<m:properties__gpg.useagent>true</m:properties__gpg.useagent>
+		<m:maven.plugins>org.apache.maven.plugins__maven-remote-resources-plugin__null|org.apache.maven.plugins__maven-remote-resources-plugin__null|null__maven-compiler-plugin__null|org.apache.maven.plugins__maven-remote-resources-plugin__null|org.apache.maven.plugins__maven-remote-resources-plugin__null|null__maven-compiler-plugin__null|org.apache.felix__maven-bundle-plugin__null|org.apache.rat__apache-rat-plugin__null</m:maven.plugins>
+		<m:properties__mime4j.version>0.7.2</m:properties__mime4j.version>
+	</info>
+	<configurations>
+		<conf name="default" visibility="public" description="runtime dependencies and master artifact can be used with this conf" extends="runtime,master"/>
+		<conf name="master" visibility="public" description="contains only the artifact published by this module itself, with no transitive dependencies"/>
+		<conf name="compile" visibility="public" description="this is the default scope, used if none is specified. Compile dependencies are available in all classpaths."/>
+		<conf name="provided" visibility="public" description="this is much like compile, but indicates you expect the JDK or a container to provide it. It is only available on the compilation classpath, and is not transitive."/>
+		<conf name="runtime" visibility="public" description="this scope indicates that the dependency is not required for compilation, but is for execution. It is in the runtime and test classpaths, but not the compile classpath." extends="compile"/>
+		<conf name="test" visibility="private" description="this scope indicates that the dependency is not required for normal use of the application, and is only available for the test compilation and execution phases." extends="runtime"/>
+		<conf name="system" visibility="public" description="this scope is similar to provided except that you have to provide the JAR which contains it explicitly. The artifact is always available and is not looked up in a repository."/>
+		<conf name="sources" visibility="public" description="this configuration contains the source artifact of this module, if any."/>
+		<conf name="javadoc" visibility="public" description="this configuration contains the javadoc artifact of this module, if any."/>
+		<conf name="optional" visibility="public" description="contains all optional dependencies"/>
+	</configurations>
+	<publications>
+		<artifact name="tika-parsers" type="bundle" ext="jar" conf="master"/>
+		<artifact name="tika-parsers" type="source" ext="jar" conf="sources" m:classifier="sources"/>
+		<artifact name="tika-parsers" type="javadoc" ext="jar" conf="javadoc" m:classifier="javadoc"/>
+	</publications>
+	<dependencies>
+		<dependency org="org.osgi" name="org.osgi.core" rev="4.0.0" force="true" conf="optional->compile(*),provided(*),runtime(*),master(*)"/>
+		<dependency org="org.apache.tika" name="tika-core" rev="1.3" force="true" conf="compile->compile(*),master(*);runtime->runtime(*)"/>
+		<dependency org="org.gagravarr" name="vorbis-java-tika" rev="0.1" force="true" conf="compile->compile(*),master(*);runtime->runtime(*)"/>
+		<dependency org="org.apache.felix" name="org.apache.felix.scr.annotations" rev="1.6.0" force="true" conf="provided->compile(*),provided(*),runtime(*),master(*)"/>
+		<dependency org="edu.ucar" name="netcdf" rev="4.2-min" force="true" conf="compile->compile(*),master(*);runtime->runtime(*)"/>
+		<dependency org="org.apache.james" name="apache-mime4j-core" rev="0.7.2" force="true" conf="compile->compile(*),master(*);runtime->runtime(*)"/>
+		<dependency org="org.apache.james" name="apache-mime4j-dom" rev="0.7.2" force="true" conf="compile->compile(*),master(*);runtime->runtime(*)"/>
+		<dependency org="org.apache.commons" name="commons-compress" rev="1.4.1" force="true" conf="compile->compile(*),master(*);runtime->runtime(*)"/>
+		<dependency org="commons-codec" name="commons-codec" rev="1.5" force="true" conf="compile->compile(*),master(*);runtime->runtime(*)"/>
+		<dependency org="org.apache.pdfbox" name="pdfbox" rev="1.7.1" force="true" conf="compile->compile(*),master(*);runtime->runtime(*)"/>
+		<dependency org="org.bouncycastle" name="bcmail-jdk15" rev="1.45" force="true" conf="compile->compile(*),master(*);runtime->runtime(*)"/>
+		<dependency org="org.bouncycastle" name="bcprov-jdk15" rev="1.45" force="true" conf="compile->compile(*),master(*);runtime->runtime(*)"/>
+		<dependency org="org.apache.poi" name="poi" rev="3.8" force="true" conf="compile->compile(*),master(*);runtime->runtime(*)"/>
+		<dependency org="org.apache.poi" name="poi-scratchpad" rev="3.8" force="true" conf="compile->compile(*),master(*);runtime->runtime(*)"/>
+		<dependency org="org.apache.poi" name="poi-ooxml" rev="3.8" force="true" conf="compile->compile(*),master(*);runtime->runtime(*)">
+			<exclude org="stax" module="stax-api" name="*" type="*" ext="*" conf="" matcher="exact"/>
+			<exclude org="xml-apis" module="xml-apis" name="*" type="*" ext="*" conf="" matcher="exact"/>
+		</dependency>
+		<dependency org="org.apache.geronimo.specs" name="geronimo-stax-api_1.0_spec" rev="1.0.1" force="true" conf="compile->compile(*),master(*);runtime->runtime(*)"/>
+		<dependency org="org.ccil.cowan.tagsoup" name="tagsoup" rev="1.2.1" force="true" conf="compile->compile(*),master(*);runtime->runtime(*)"/>
+		<dependency org="asm" name="asm" rev="3.1" force="true" conf="compile->compile(*),master(*);runtime->runtime(*)"/>
+		<dependency org="com.googlecode.mp4parser" name="isoparser" rev="1.0-RC-1" force="true" conf="compile->compile(*),master(*);runtime->runtime(*)"/>
+		<dependency org="com.drewnoakes" name="metadata-extractor" rev="2.6.2" force="true" conf="compile->compile(*),master(*);runtime->runtime(*)"/>
+		<dependency org="de.l3s.boilerpipe" name="boilerpipe" rev="1.1.0" force="true" conf="compile->compile(*),master(*);runtime->runtime(*)"/>
+		<dependency org="rome" name="rome" rev="0.9" force="true" conf="compile->compile(*),master(*);runtime->runtime(*)"/>
+		<dependency org="org.gagravarr" name="vorbis-java-core" rev="0.1" force="true" conf="compile->compile(*),master(*);runtime->runtime(*)"/>
+		<dependency org="com.googlecode.juniversalchardet" name="juniversalchardet" rev="1.0.3" force="true" conf="compile->compile(*),master(*);runtime->runtime(*)"/>
+		<dependency org="junit" name="junit" rev="4.10" force="true" conf="test->runtime(*),master(*)"/>
+		<dependency org="org.mockito" name="mockito-core" rev="1.7" force="true" conf="test->runtime(*),master(*)"/>
+		<dependency org="org.slf4j" name="slf4j-log4j12" rev="1.5.6" force="true" conf="test->runtime(*),master(*)"/>
+		<override org="org.apache.felix" module="org.apache.felix.scr.annotations" matcher="exact" rev="1.6.0"/>
+		<override org="biz.aQute" module="bndlib" matcher="exact" rev="1.43.0"/>
+		<override org="junit" module="junit" matcher="exact" rev="4.10"/>
+	</dependencies>
+</ivy-module>

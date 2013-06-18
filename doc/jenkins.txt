@@ -1,0 +1,32 @@
+Configuration du build¶
+
+On considère que jenkins tourne par défaut, sous l'user jenkins
+Installations en plus de Jenkins
+
+sudo apt-get install tomcat7
+Tomcat 7 ne doit pas démarrer (c'est seulement pour avoir ses librairies dans le path de compilation)
+sudo update-rc.d tomcat7 disable
+Import du job ApiScol
+
+A venir
+Clé RSA
+
+Si vous avez jenkins comme user de Jenkins :
+sudo su jenkins
+
+Puis :
+ssh-keygen
+avec le nom par défaut sans passhrase
+ssh-copy-id -i ~/.ssh/id_rsa.pub user@url-du-serveur-de-deploiement
+Fichiers de mot de passe tomcat et ftp apiscol
+
+Les fichiers contenant les modes de passe s'appellent :
+
+    properties.{nom du déploiement} par exemple dev, test, demo, prod-svt (pour votre install de tomcat sur le ou les serveurs de déploiement)
+    Dans ce cas un fichier {nom du déploiement}.deploy.xml et {nom du déploiement}.deploy.tokens.properties doivent être fournis dans ApiScol_Commons/ant/configs/
+    Mais ce fichiers ne contiennent aucun mot de passe.
+
+    properties.common (pour le ftp du site apiscol comprenant la doc et le cdn)
+
+Ils doivent être posés sur la machine de build quelquepart et leur chemin indiqué à ant de cette façon :
+-Dpasswords.dir=/chemin/absolu/du/repertoire/des/mots/de/passe

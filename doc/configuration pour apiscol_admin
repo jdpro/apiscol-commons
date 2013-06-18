@@ -1,0 +1,21 @@
+-install de apache2
+sudo apt-get install apache2
+-creation lien symbolique
+sudo ln -s /home/philippe/workspace/ApiScol_Admin /var/www/aps_admin
+-install de php5
+sudo apt-get install php5
+-install de php5-xsl
+sudo apt-get install php5-xsl
+-activation du mod_rewrite
+sudo a2enmod rewrite
+sudo gedit /etc/apache2/sites-available/default
+
+On modifie dans la partie <Directory /var/www/>:
+mettre: AllowOverride None ---> AllowOverride All
+
+sudo service apache2 restart
+
+note: verifier les droits d'acces:
+sudo chmod -R 750 ApiScol_Admin
+eventuellement: sudo chmod -R 777 /var/www/aps_admin
+

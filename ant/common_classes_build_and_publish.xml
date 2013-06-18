@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<!DOCTYPE project>
+<project default="ask" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
+	<taskdef name="if" classname="net.sf.antcontrib.logic.IfTask" />
+	<property name="tomcat.home" value="/usr/share/tomcat7" />
+	<property name="workspace.dir" value="${basedir}/../..">
+	</property>
+	<property name="commons.dir" value="${basedir}/..">
+	</property>
+	<property name="build.dir" value="${commons.dir}/build">
+	</property>
+	<property name="src.dir" value="${commons.dir}/src">
+	</property>
+	<property name="libs.dir" value="${commons.dir}/libs">
+	</property>
+	<property name="ant.dir" value="${commons.dir}/ant">
+	</property>
+	<property name="ivy.dep.file" value="${ant.dir}/ivy-apiscol.xml">
+	</property>
+	<property name="revision" value="1.0">
+	</property>
+	<property name="jar.file" value="apiscol-commons-${revision}.jar" />
+	<path id="classpath">
+		<fileset dir="${libs.dir}" />
+		<fileset dir="${tomcat.home}/bin" />
+		<fileset dir="${tomcat.home}/lib" />
+	</path>
+	<target name="ask">
+		<input message="Build common classes ?" validargs="true,false" addproperty="build-commons" defaultvalue="true" />
+		<if>
+			<equals arg1="${build-commons}" arg2="true" />
+			<then>
+				<antcall target="publish" />
+			</then>
+		</if>
+	</target>
+
+	<target name="clean">
+		<input message="Clean eavy cache ?" validargs="true,false" addproperty="clean-ivy-cache" defaultvalue="false" />
+		<if>
+			<equals arg1="${clean-ivy-cache}" arg2="true" />
+			<then>
+				<ivy:cleancache />
+			</then>
+		</if>
+		<delete includeemptydirs="true">
+			<fileset dir="${build.dir}" includes="**/*" />
+		</delete>
+	</target>
+	<target name="resolve" depends="publish-tika">
+		<ivy:resolve conf="commons">
+		</ivy:resolve>
+		<ivy:retrieve sync="true" type="jar,bundle" pattern="${libs.dir}/[artifact]-[revision].[ext]" conf="commons" />
+
+	</target>
+	<target name="compile" depends="resolve">
+		<javac destdir="${build.dir}" includeantruntime="true" includejavaruntime="true" verbose="false">
+			<src path="${src.dir}" />
+			<classpath refid="classpath" />
+		</javac>
+	</target>
+	<target name="archive" depends="compile">
+		<jar destfile="${jar.file}" basedir="${build.dir}">
+		</jar>
+	</target>
+	<target name="publish" depends="archive">
+		<ivy:publish pubrevision="${revision}" status="release" resolver="local" overwrite="true" organisation="crdp_versailles">
+			<artifacts pattern="[artifact]-[revision].[ext]" />
+		</ivy:publish>
+	</target>
+	<target name="publish-tika" depends="clean" description="Publishing tika extended version in local repo">
+		<ant antfile="tika_core_publish.xml" inheritall="false">
+		</ant>
+		<ant antfile="tika_parsers_publish.xml" inheritall="false">
+		</ant>
+	</target>
+
+</project>

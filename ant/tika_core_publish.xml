@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!DOCTYPE project>
+<project default="publish-tika" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
+
+	<property name="commons.dir" value="${basedir}/..">
+	</property>
+	<property name="build.dir" value="${commons.dir}/build">
+	</property>
+	<property name="src.dir" value="${commons.dir}/src">
+	</property>
+	<property name="libs.dir" value="${commons.dir}/libs">
+	</property>
+	<property name="ant.dir" value="${commons.dir}/ant">
+	</property>
+	<property name="ivy.dep.file" value="${ant.dir}/ivy-tika-core.xml">
+	</property>
+	<property name="ivy.organisation" value="org.apache.tika">
+	</property>
+	<property name="ivy.module" value="tika-core">
+	</property>
+	<target name="publish-tika">
+		<delete file="ivy.xml">
+		</delete>
+		<ivy:resolve />
+		<ivy:publish organisation="org.apache.tika" module="tika-core" revision="1.3" status="release" artifactspattern="[artifact].[ext]" resolver="local" pubrevision="1.3" overwrite="true" />
+	</target>
+
+</project>

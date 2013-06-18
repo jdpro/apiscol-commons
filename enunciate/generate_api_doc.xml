@@ -1,0 +1,172 @@
+<?xml version="1.0"?>
+<!DOCTYPE project>
+<project name="generate ws api doc" default="main" basedir="../..">
+	<taskdef name="if" classname="net.sf.antcontrib.logic.IfTask" />
+	<property name="outputdir" value="${basedir}/website/content/api" />
+	<property name="enunciate.home" value="${basedir}/enunciate-1.26.2" />
+	<property name="jdk.home" value="/usr/lib/jvm/default-java" />
+	<property name="tomcat.home" value="/usr/share/tomcat7" />
+	<property name="generate.documentation" value="true" />
+	<path id="common-libs">
+		<fileset dir="${enunciate.home}/lib" id="enunciate-libs">
+			<include name="**/*.jar" />
+			<exclude name="servlet-api-2.3.jar" />
+		</fileset>
+		<fileset dir="${enunciate.home}" id="enunciate-core">
+			<include name="enunciate-full-*.jar" />
+		</fileset>
+		<fileset dir="${java.home}/lib" id="jdk-tools">
+			<include name="tools.jar" />
+		</fileset>
+		<fileset dir="${tomcat.home}/lib" id="servlet-core">
+			<include name="servlet-api.jar" />
+		</fileset>
+	</path>
+	<path id="enunciate.content.classpath">
+		<path refid="common-libs" />
+		<fileset dir="${basedir}/ApiScol_Content/WebContent/WEB-INF/lib">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+	<path id="enunciate.meta.classpath">
+		<path refid="common-libs" />
+		<fileset dir="${basedir}/ApiScol_Meta/WebContent/WEB-INF/lib">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+	<path id="enunciate.pack.classpath">
+		<path refid="common-libs" />
+		<fileset dir="${basedir}/ApiScol_Pack/WebContent/WEB-INF/lib">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+	<path id="enunciate.seek.classpath">
+		<path refid="common-libs" />
+		<fileset dir="${basedir}/ApiScol_Seek/WebContent/WEB-INF/lib">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+	<path id="enunciate.previews.classpath">
+		<path refid="common-libs" />
+		<fileset dir="${basedir}/ApiScol_Previews/WebContent/WEB-INF/lib">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+	<path id="enunciate.edit.classpath">
+		<path refid="common-libs" />
+		<fileset dir="${basedir}/ApiScol_Edit/WebContent/WEB-INF/lib">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+	<path id="enunciate.thumbs.classpath">
+		<path refid="common-libs" />
+		<fileset dir="${basedir}/ApiScol_Thumbs/WebContent/WEB-INF/lib">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+
+	<target name="main">
+		<if>
+			<equals arg1="${generate.documentation}" arg2="true" />
+			<then>
+				<antcall target="clean" />
+				<antcall target="generate_meta_documentation" />
+				<antcall target="generate_content_documentation" />
+				<antcall target="generate_pack_documentation" />
+				<antcall target="generate_seek_documentation" />
+				<antcall target="generate_previews_documentation" />
+				<antcall target="generate_edit_documentation" />
+				<antcall target="generate_thumbs_documentation" />
+			</then>
+			<else>
+				<echo>Documentation will not be generated</echo>
+			</else>
+		</if>
+	</target>
+	<target name="generate_content_documentation">
+		<taskdef name="enunciate-content" classname="org.codehaus.enunciate.main.EnunciateTask">
+			<classpath refid="enunciate.content.classpath" />
+		</taskdef>
+		<mkdir dir="${outputdir}/content" />
+		<enunciate-content basedir="${basedir}/ApiScol_Content/src" configFile="${basedir}/ApiScol_Commons/enunciate/enunciate_content.xml" generatedir="${outputdir}/content">
+			<include name="**/*.java" />
+			<classpath refid="enunciate.content.classpath" />
+			<export artifactid="docs" destination="${outputdir}/content" />
+		</enunciate-content>
+	</target>
+	<target name="generate_meta_documentation">
+		<echo message="${java.home}">
+		</echo>
+		<taskdef name="enunciate-meta" classname="org.codehaus.enunciate.main.EnunciateTask">
+			<classpath refid="enunciate.meta.classpath" />
+		</taskdef>
+		<mkdir dir="${outputdir}/meta" />
+		<enunciate-meta basedir="${basedir}/ApiScol_Meta/src" configFile="${basedir}/ApiScol_Commons/enunciate/enunciate_meta.xml" generatedir="${outputdir}/meta">
+			<include name="**/*.java" />
+			<classpath refid="enunciate.meta.classpath" />
+			<export artifactid="docs" destination="${outputdir}/meta" />
+		</enunciate-meta>
+	</target>
+	<target name="generate_pack_documentation">
+		<taskdef name="enunciate-pack" classname="org.codehaus.enunciate.main.EnunciateTask">
+			<classpath refid="enunciate.pack.classpath" />
+		</taskdef>
+		<mkdir dir="${outputdir}/pack" />
+		<enunciate-pack basedir="${basedir}/ApiScol_Pack/src" configFile="${basedir}/ApiScol_Commons/enunciate/enunciate_pack.xml" generatedir="${outputdir}/pack">
+			<include name="**/*.java" />
+			<classpath refid="enunciate.pack.classpath" />
+			<export artifactid="docs" destination="${outputdir}/pack" />
+		</enunciate-pack>
+	</target>
+	<target name="generate_seek_documentation">
+		<taskdef name="enunciate-seek" classname="org.codehaus.enunciate.main.EnunciateTask">
+			<classpath refid="enunciate.seek.classpath" />
+		</taskdef>
+		<mkdir dir="${outputdir}/seek" />
+		<enunciate-seek basedir="${basedir}/ApiScol_Seek/src" configFile="${basedir}/ApiScol_Commons/enunciate/enunciate_seek.xml" generatedir="${outputdir}/seek">
+			<include name="**/*.java" />
+			<classpath refid="enunciate.seek.classpath" />
+			<export artifactid="docs" destination="${outputdir}/seek" />
+		</enunciate-seek>
+	</target>
+	<target name="generate_thumbs_documentation">
+		<taskdef name="enunciate-thumbs" classname="org.codehaus.enunciate.main.EnunciateTask">
+			<classpath refid="enunciate.thumbs.classpath" />
+		</taskdef>
+		<mkdir dir="${outputdir}/thumbs" />
+		<enunciate-thumbs basedir="${basedir}/ApiScol_Thumbs/src" configFile="${basedir}/ApiScol_Commons/enunciate/enunciate_thumbs.xml" generatedir="${outputdir}/thumbs">
+			<include name="**/*.java" />
+			<classpath refid="enunciate.thumbs.classpath" />
+			<export artifactid="docs" destination="${outputdir}/thumbs" />
+		</enunciate-thumbs>
+	</target>
+	<target name="generate_edit_documentation">
+		<taskdef name="enunciate-edit" classname="org.codehaus.enunciate.main.EnunciateTask">
+			<classpath refid="enunciate.edit.classpath" />
+		</taskdef>
+		<mkdir dir="${outputdir}/edit" />
+		<enunciate-edit basedir="${basedir}/ApiScol_Edit/src" configFile="${basedir}/ApiScol_Commons/enunciate/enunciate_edit.xml" generatedir="${outputdir}/edit">
+			<include name="**/*.java" />
+			<classpath refid="enunciate.edit.classpath" />
+			<export artifactid="docs" destination="${outputdir}/edit" />
+		</enunciate-edit>
+	</target>
+	<target name="generate_previews_documentation">
+
+		<taskdef name="enunciate-previews" classname="org.codehaus.enunciate.main.EnunciateTask">
+			<classpath refid="enunciate.previews.classpath" />
+		</taskdef>
+		<mkdir dir="${outputdir}/previews" />
+		<enunciate-previews basedir="${basedir}/ApiScol_Previews/src" configFile="${basedir}/ApiScol_Commons/enunciate/enunciate_previews.xml" generatedir="${outputdir}/previews">
+			<include name="**/*.java" />
+			<classpath refid="enunciate.previews.classpath" />
+			<export artifactid="docs" destination="${outputdir}/previews" />
+		</enunciate-previews>
+	</target>
+
+
+	<target name="clean">
+		<delete dir="${outputdir}" />
+	</target>
+
+</project>

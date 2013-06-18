@@ -1,0 +1,184 @@
+ssh sur jenkins
+su jenkins
+ssh-copy-id -i ~/.ssh/id_rsa.pub root@172.18.78.38
+ssh-copy-id -i ~/.ssh/id_rsa.pub root@172.18.78.39
+ apt-get install rsync sur la machine jenkins et les machines cibles de rsync
+apt-get install openjdk-6-jdk sur jenkins
+installer tomcat7 sur jenkins pour ses libs puis : supprimer l'autostart 
+update-rc.d tomcat7 remove
+
+
+
+créer un fichier de mots de passe properties.[id_du_deploiement]
+
+sur les serveurs hébergeant les webservices
+sudo apt-get install openjdk-7-jre
+apt-get install tomcat7 et tomcat7-admin
+
+sur les serveurs hébergeant content, meta, pack, thumbs
+apt-get install mongodb
+pour tester : mongo apiscol doit donner le shell
+
+sur le serveur de apiscol preview, installer libreoffice et imagemagick
++ avconv : apt-get install libav-tools
+
+sur le serveur de content :
++ pdfimages : apt-get install xpdf-utils
++ convert : apt-get install imagemagick
+
+sur cette machine il y a besoin d'un directory /home/tomcat7 dont tomcat7 soit le propriétaire
+
+sur les serveurs nécessitant des ports tomcat<1024
+dans /etc/default/tomcat7 authbind=yes 
+update-rc.d -f apache2 disable si apache démarre auto
+
+attention, si le port n'est pas 80 cela crée des problèmes car l'ip n'est plus la même pour les commandes à tomcat/manager/text et les rsync.
+
+ajouter du heap space dans /usr/share/tomcat7/bin/catalina.sh ou dans /etc
+#   CATALINA_OPTS   (Optional) Java runtime options used when the "start",
+#                   "run" or "debug" command is executed.
+#                   Include here and not in JAVA_OPTS all options, that should
+#                   only be used by Tomcat itself, not by the stop process,
+#                   the version command etc.
+#                   Examples are heap size, GC logging, JMX ports etc.
+CATALINA_OPTS="-Xms3000m -Xmx3000m"
+
+A vérifier en cas de pb :
+#!/bin/sh
+JAVA_HOME="/usr/lib/jvm/java-7-openjdk"
+JRE_HOME=""/usr/lib/jvm/java-7-openjdk"/jre"
+
+java ne doit pas tourner en headless
+il doit avoir un encodage par défaut en utf8 pour les fichiers : -Dfile.encoding=UTF-8 à ajouter dans catalina_opts
+
+pour changer le port tomcat7
+dans /var/lib/tomcat7/conf/server.xml
+<Connector port="[PORT]" protocol="HTTP/1.1"
+               connectionTimeout="20000"
+               URIEncoding="UTF-8"
+               redirectPort="8443" />
+
+créer les fichiers de conf
+
+[id_du_deploiement].tokens.properties
+
+apiscol_instance_name=example-dev
+apiscol_instance_label=Example apiscol - developpement
+resources_directory=/home/resources
+meta_directory=/home/meta
+thumbs_directory=/home/thumbs
+manifests_directory=/home/manifests
+previews_directory=/home/previews
+input_directory=/home/input
+output_directory=/home/output
+solr_metadata_core_host=http://172.18.78.39
+solr_resources_core_host=http://172.18.78.39
+apiscol_edit_host=http://172.18.78.39
+apiscol_meta_host=http://172.18.78.39
+apiscol_content_host=http://172.18.78.39
+apiscol_pack_host=http://172.18.78.39
+apiscol_previews_host=http://172.18.78.38:8080
+apiscol_thumbs_host=http://172.18.78.39
+
+<?xml version="1.0" encoding="UTF-8"?>
+<parameters>
+	<apiscol_instance_name>example-dev</apiscol_instance_name>
+	<apiscol_instance_label>Example de dépôt de ressources - développement
+	</apiscol_instance_label>
+	<directories>
+		<resources>/home/resources</resources>
+		<thumbs>/home/thumbs</thumbs>
+		<metadata>/home/meta</metadata>
+		<icons>/home/icons</icons>
+		<manifests>/home/manifests</manifests>
+		<previews>/home/previews</previews>
+		<conversions-input>/home/input</conversions-input>
+		<conversions-output>/home/output</conversions-output>
+		<remote-solr>/home/solr</remote-solr>
+		<remote-display>/home/display</remote-display>
+		<remote-test-ui>/home/test_ui</remote-test-ui>
+	</directories>
+	<meta_ws>
+		<deploy_host>172.18.78.39</deploy_host>
+		<host_user>root</host_user>
+		<tomcat_user>apiscoltomcat</tomcat_user>
+	</meta_ws>
+	<content_ws>
+		<deploy_host>172.18.78.39</deploy_host>
+		<host_user>root</host_user>
+		<tomcat_user>apiscoltomcat</tomcat_user>
+	</content_ws>
+	<pack_ws>
+		<deploy_host>172.18.78.39</deploy_host>
+		<host_user>root</host_user>
+		<tomcat_user>apiscoltomcat</tomcat_user>
+	</pack_ws>
+	<thumbs_ws>
+		<deploy_host>172.18.78.39</deploy_host>
+		<host_user>root</host_user>
+		<tomcat_user>apiscoltomcat</tomcat_user>
+	</thumbs_ws>
+	<previews_ws>
+		<deploy_host>172.18.78.38:8080
+		</deploy_host>
+		<host_user>root</host_user>
+		<tomcat_user>tomcat</tomcat_user>
+	</previews_ws>
+	<seek_ws>
+		<deploy_host>172.18.78.39</deploy_host>
+		<host_user>root</host_user>
+		<tomcat_user>apiscoltomcat</tomcat_user>
+	</seek_ws>
+	<edit_ws>
+		<deploy_host>172.18.78.39</deploy_host>
+		<host_user>root</host_user>
+		<tomcat_user>apiscoltomcat</tomcat_user>
+	</edit_ws>
+	<test-ui>
+		<deploy_host>172.18.78.39</deploy_host>
+		<host_user>root</host_user>
+	</test-ui>
+	<solr>
+		<deploy_host>172.18.78.39</deploy_host>
+		<host_user>root</host_user>
+		<tomcat_user>apiscoltomcat</tomcat_user>
+	</solr>
+	<test_display>
+		<deploy_host>172.18.78.39</deploy_host>
+		<host_user>root</host_user>
+	</test_display>
+</parameters>
+
+
+dans tomcat user des machines qui ont des tomcats 
+
+<role rolename="manager-gui" />
+<role rolename="manager" />
+<role rolename="manager-script" />
+<role rolename="admin-gui" />
+<role rolename="admin" />
+<role rolename="admin-script" />
+<user username="login" password="pass" roles="manager, manager-gui,manager-script,admin,admin-gui,admin-script" />
+
+
+à reporter dans properties.[id_du_deploiement] sur jenkins
+
+/etc/init.d/tomcat7 restart sur les machines qui ont des tomcats 
+
+ajouter dans les build parameters de jenkins : deploy.target [id_du_deploiement]
+
+dans home de tous les serveurs ayant tomcat créer si ce n'est le cas une répéeroire /home/nom_user
+
+changer le user de tomcat :
+dans /etc/default/tomcat7 ( a un effet)
+dans /etc/init.d/tomcat7 (le param existe aussi mais reste sans effet, écrasé par le précédent)
+
+connexion ssl d'apiscol edit :
+keytool -genkey -alias tomcat -keyalg RSA -keystore /home/tomcat7/.keystore
+
+puis dans server.xml
+<Connector port="8443" protocol="HTTP/1.1" SSLEnabled="true"
+               maxThreads="150" scheme="https" secure="true"
+               clientAuth="false" sslProtocol="TLS" keystoreFile="/home/tomcat7/.keystore" 
+                keystorePass="lemotdepasse choisi"/>
+

@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<enunciate label="test" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://enunciate.codehaus.org/schemas/enunciate-1.26.xsd">
+	<deployment host="apiscol-dev.crdp.ac-versailles.fr"
+		context="/seek" />
+	<namespaces>
+
+	</namespaces>
+	<services>
+		<rest defaultRestSubcontext="seek"></rest>
+	</services>
+	<modules>
+		<!-- Docs -->
+		<docs splashPackage="fr.ac_versailles.crdp.apiscol.seek"
+			includeExampleXml="true" title="Apiscol Seek Web Service" copyright="CRDP de l'Académie de Versailles"
+			css="enunciate.css" freemarkerXMLProcessingTemplate="docs2.fmt">
+		</docs>
+		<java-client disabled="false" />
+		<amf disabled="true" />
+		<c disabled="true" />
+		<obj-c disabled="true" />
+		<csharp disabled="true" />
+		<spring-app disabled="true" />
+		<cxf disabled="true" />
+		<gwt disabled="true" />
+		<jaxws-ri disabled="true" />
+		<jersey disabled="false" useSubcontext="true" />
+		<jboss disabled="true" />
+	</modules>
+</enunciate>
