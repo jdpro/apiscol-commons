@@ -28,9 +28,10 @@
 				</path>
 			</classpath>
 		</javac>
-		<delete includeemptydirs="true">
+		<delete includeemptydirs="true" failonerror="false">
 			<fileset dir="${tests.reports.dir}" includes="**/*" />
 		</delete>
+		<mkdir dir="${tests.reports.dir}" />
 		<if>
 			<equals arg1="${run-tests-gp1}" arg2="true" />
 			<then>
