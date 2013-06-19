@@ -21,6 +21,7 @@
 		<loadproperties srcfile="${configs.dir}/${deploy.target}.deploy.tokens.properties">
 		</loadproperties>
 		<mkdir dir="${tests.bin.dir}" />
+		<mkdir dir="${tests.lib.dir}" />
 		<javac srcdir="${tests.src.dir}" destdir="${tests.bin.dir}" includeantruntime="false">
 			<classpath>
 				<path refid="compilation.path">
