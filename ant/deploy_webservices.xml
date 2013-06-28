@@ -296,6 +296,7 @@
 			<then>
 				<antcall target="deploy_previews">
 					<param name="server.host" value="${parameters.previews_ws.deploy_host}" />
+					<param name="epub2pdf.path" value="${parameters.directories.epubtopdf}" />
 					<param name="server.user" value="${parameters.previews_ws.host_user}" />
 					<param name="tomcat.user" value="${parameters.previews_ws.tomcat_user}" />
 					<param name="tomcat.password" value="${previews.tomcat.password}" />
@@ -751,6 +752,8 @@
 		<undeploy failonerror="false" url="http://${server.host}/manager/text" path="/previews" username="${tomcat.user}" password="${tomcat.password}" />
 		<deploy url="http://${server.host}/manager/text" war="${basedir}/deploy/previews.war" path="/previews" username="${tomcat.user}" password="${tomcat.password}" />
 		<delete file="${basedir}/deploy/previews.war" />
+		<sshexec failonerror="false" host="${server.host}" username="${server.user}" keyfile="${user.home}/.ssh/id_rsa" knownhosts="${user.home}/.ssh/known_hosts" trust="true" command="chmod +x ${epub2pdf.path}" />
+		<sshexec failonerror="false" host="${server.host}" username="${server.user}" keyfile="${user.home}/.ssh/id_rsa" knownhosts="${user.home}/.ssh/known_hosts" trust="true" command="chown tomcat7 ${epub2pdf.path}" />
 	</target>
 	<target name="deploy_previews_static_resources">
 		<copy file="${configs.templates.dir}/context.xml" toFile="${previews.dir}/context.xml" overwrite="true">

@@ -11,6 +11,7 @@
 		<icons>/home/icons</icons>
 		<manifests>/home/manifests</manifests>
 		<previews>/home/previews</previews>
+		<epubtopdf>/var/lib/tomcat7/webapps/previews/WEB-INF/epub2pdf/epub2pdf.sh</epubtopdf>
 		<conversions-input>/home/input</conversions-input>
 		<conversions-output>/home/output</conversions-output>
 		<remote-solr>/home/solr</remote-solr>
