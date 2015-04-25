@@ -22,7 +22,7 @@ public enum ParametersKeys {
 			"absolute_page_limit"), apiscolVersion("apiscol_version"), cleaningDelay(
 			"cleaning_delay"), automaticThumbChoiceDelay(
 			"automatic_thumb_choice_delay"), automaticThumbChoiceMaxNumberOfTries(
-			"automatic_thumb_choice_max_number_of_tries"), logLevel("log_level");
+			"automatic_thumb_choice_max_number_of_tries"), logLevel("log_level"), epubPreviewQuality("epub_preview_quality");
 	private String value;
 
 	private ParametersKeys(String value) {
