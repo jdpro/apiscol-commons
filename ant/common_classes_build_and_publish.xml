@@ -26,6 +26,8 @@
 		<fileset dir="${tomcat.home}/lib" />
 	</path>
 	<target name="ask">
+		<echo message="Début du build des classes communes">
+		</echo>
 		<input message="Build common classes ?" validargs="true,false" addproperty="build-commons" defaultvalue="true" />
 		<if>
 			<equals arg1="${build-commons}" arg2="true" />

@@ -5,6 +5,7 @@
 	<taskdef name="undeploy" classname="org.apache.catalina.ant.UndeployTask" />
 	<taskdef name="if" classname="net.sf.antcontrib.logic.IfTask" />
 	<taskdef name="propertyregex" classname="net.sf.antcontrib.property.RegexTask" />
+	<property name="deploy.target" value="simple" />
 	<property name="tomcat.home" value="/usr/share/tomcat7" />
 	<property name="ant.dir" value="${basedir}/ApiScol_Commons/ant" />
 	<property name="configs.dir" value="${basedir}/ApiScol_Commons/ant/configs" />
@@ -41,7 +42,6 @@
 	<property name="integrated-search-jsfile" value="${test-ui.dir}/WebContent/js/integrated_search_test_ui.js" />
 	<property name="pack-test-html" value="${test-ui.dir}/WebContent/pack_test_formulaire.html" />
 	<property name="local.test-ui.dir" value="${test-ui.dir}/WebContent/" />
-	<property name="secrets.tokens.file" value="${configs.dir}/shared.secrets.tokens.properties" />
 	<property name="passwords.dir" value="${basedir}/deploy">
 	</property>
 	<path id="compilation.path">
@@ -66,23 +66,16 @@
 
 
 	<target name="main">
-		<generateguid property="meta_shared_secret" />
-		<generateguid property="content_shared_secret" />
-		<generateguid property="thumbs_shared_secret" />
-		<generateguid property="pack_shared_secret" />
-		<generateguid property="previews_shared_secret" />
-		<input message="Choose dev, demo, test or prod :" validargs="dev,demo,gandi,test,prod" addproperty="deploy.target" defaultvalue="dev" />
-		<input message="First install ?" validargs="true,false" addproperty="first-install" defaultvalue="false" />
-		<input message="Deploy test UI ?" validargs="true,false" addproperty="deploy-test-ui" defaultvalue="true" />
-		<input message="Deploy solr ?" validargs="true,false" addproperty="deploy-solr" defaultvalue="true" />
-		<input message="Deploy display UI ?" validargs="true,false" addproperty="deploy-display" defaultvalue="true" />
-		<input message="Deploy meta ?" validargs="true,false" addproperty="deploy-meta" defaultvalue="true" />
-		<input message="Deploy content ?" validargs="true,false" addproperty="deploy-content" defaultvalue="true" />
-		<input message="Deploy pack ?" validargs="true,false" addproperty="deploy-pack" defaultvalue="true" />
-		<input message="Deploy edit ?" validargs="true,false" addproperty="deploy-edit" defaultvalue="true" />
-		<input message="Deploy thumbs ?" validargs="true,false" addproperty="deploy-thumbs" defaultvalue="true" />
-		<input message="Deploy seek ?" validargs="true,false" addproperty="deploy-seek" defaultvalue="true" />
-		<input message="Deploy previews ?" validargs="true,false" addproperty="deploy-previews" defaultvalue="true" />
+		<input message="Deploy test UI ?" validargs="true,false" addproperty="deploy-test-ui" defaultvalue="false" />
+		<input message="Deploy solr ?" validargs="true,false" addproperty="deploy-solr" defaultvalue="false" />
+		<input message="Deploy display UI ?" validargs="true,false" addproperty="deploy-display" defaultvalue="false" />
+		<input message="Deploy meta ?" validargs="true,false" addproperty="deploy-meta" defaultvalue="false" />
+		<input message="Deploy content ?" validargs="true,false" addproperty="deploy-content" defaultvalue="false" />
+		<input message="Deploy pack ?" validargs="true,false" addproperty="deploy-pack" defaultvalue="false" />
+		<input message="Deploy edit ?" validargs="true,false" addproperty="deploy-edit" defaultvalue="false" />
+		<input message="Deploy thumbs ?" validargs="true,false" addproperty="deploy-thumbs" defaultvalue="false" />
+		<input message="Deploy seek ?" validargs="true,false" addproperty="deploy-seek" defaultvalue="false" />
+		<input message="Deploy previews ?" validargs="true,false" addproperty="deploy-previews" defaultvalue="false" />
 		<echo message="Loading password file for target ${deploy.target}">
 		</echo>
 		<if>
@@ -108,26 +101,10 @@
 		</if>
 		<xmlproperty file="${configs.dir}/eclipse.local.xml" keeproot="true" />
 		<if>
-			<equals arg1="${first-install}" arg2="true" />
-			<then>
-				<antcall target="create-directories" inheritall="yes">
-
-				</antcall>
-			</then>
-			<else>
-				<echo message="Directories will not be created" />
-			</else>
-		</if>
-		<if>
 			<equals arg1="${deploy-test-ui}" arg2="true" />
 			<then>
 				<antcall target="transfer-test-ui">
-					<param name="server.host" value="${parameters.test-ui.deploy_host}" />
-					<param name="server.user" value="${parameters.test-ui.host_user}" />
-					<param name="remote.ssl.server.port" value="${parameters.test-ui.host_ssl_port}" />
-					<param name="remote.test-ui.dir" value="${parameters.directories.remote-test-ui}" />
-					<param name="tomcat.user" value="${parameters.meta_ws.tomcat_user}" />
-					<param name="tomcat.password" value="${meta.tomcat.password}" />
+
 				</antcall>
 			</then>
 			<else>
@@ -138,18 +115,8 @@
 			<equals arg1="${deploy-solr}" arg2="true" />
 			<then>
 				<antcall target="sync_solr">
-					<param name="server.host" value="${parameters.solr.deploy_host}" />
-					<param name="server.user" value="${parameters.solr.host_user}" />
-					<param name="solr.res.dir" value="/resources/conf" />
 					<param name="local.solr.dir" value="${local.solr.base.dir}" />
-					<param name="remote.solr.dir" value="${parameters.directories.remote-solr}" />
-					<param name="context.file" value="${local.solr.base.dir}/context.xml" />
-				</antcall>
-				<antcall target="deploy_solr">
-					<param name="context.file" value="${parameters.directories.remote-solr}/context.xml" />
-					<param name="server.host" value="${parameters.solr.deploy_host}" />
-					<param name="tomcat.user" value="${parameters.solr.tomcat_user}" />
-					<param name="tomcat.password" value="${solr.tomcat.password}" />
+					<param name="remote.solr.dir" value="${parameters.directories.deploy}/${parameters.directories.remote-solr}" />
 				</antcall>
 			</then>
 			<else>
@@ -177,17 +144,6 @@
 			<then>
 				<antcall target="deploy_meta" inheritrefs="true">
 					<param name="deploy.target" value="${deploy.target}" />
-					<param name="server.host" value="${parameters.meta_ws.deploy_host}" />
-					<param name="tomcat.user" value="${parameters.meta_ws.tomcat_user}" />
-					<param name="tomcat.password" value="${meta.tomcat.password}" />
-				</antcall>
-				<antcall target="deploy_meta_static_resources" inheritrefs="true">
-					<param name="server.host" value="${parameters.meta_ws.deploy_host}" />
-					<param name="server.user" value="${parameters.meta_ws.host_user}" />
-					<param name="tomcat.user" value="${parameters.meta_ws.tomcat_user}" />
-					<param name="tomcat.password" value="${meta.tomcat.password}" />
-					<param name="remote.meta.dir" value="${parameters.directories.metadata}" />
-					<param name="remote.icons.dir" value="${parameters.directories.icons}" />
 				</antcall>
 			</then>
 			<else>
@@ -199,55 +155,18 @@
 			<then>
 				<antcall target="deploy_content">
 					<param name="deploy.target" value="${deploy.target}" />
-					<param name="server.host" value="${parameters.content_ws.deploy_host}" />
-					<param name="server.user" value="${parameters.content_ws.host_user}" />
-					<param name="tomcat.user" value="${parameters.content_ws.tomcat_user}" />
-					<param name="tomcat.password" value="${content.tomcat.password}" />
-
-				</antcall>
-				<antcall target="deploy_content_static_resources">
-					<param name="server.host" value="${parameters.content_ws.deploy_host}" />
-					<param name="server.user" value="${parameters.content_ws.host_user}" />
-					<param name="tomcat.user" value="${parameters.content_ws.tomcat_user}" />
-					<param name="tomcat.password" value="${content.tomcat.password}" />
-					<param name="remote.content.dir" value="${parameters.directories.resources}" />
-					<param name="remote.previews.dir" value="${parameters.directories.previews}" />
 				</antcall>
 			</then>
 			<else>
 				<echo message="Content ws will not be deployed" />
 			</else>
 		</if>
-		<if>
-			<equals arg1="${deploy-pack}" arg2="true" />
-			<then>
-				<antcall target="deploy_pack">
-					<param name="deploy.target" value="${deploy.target}" />
-					<param name="server.host" value="${parameters.pack_ws.deploy_host}" />
-					<param name="server.user" value="${parameters.pack_ws.host_user}" />
-					<param name="tomcat.user" value="${parameters.pack_ws.tomcat_user}" />
-					<param name="tomcat.password" value="${pack.tomcat.password}" />
-				</antcall>
-				<antcall target="deploy_pack_static_resources">
-					<param name="server.host" value="${parameters.pack_ws.deploy_host}" />
-					<param name="server.user" value="${parameters.pack_ws.host_user}" />
-					<param name="tomcat.user" value="${parameters.pack_ws.tomcat_user}" />
-					<param name="tomcat.password" value="${pack.tomcat.password}" />
-					<param name="remote.manifests.dir" value="${parameters.directories.manifests}" />
-				</antcall>
-			</then>
-			<else>
-				<echo message="Pack ws will not be deployed" />
-			</else>
-		</if>
+
 		<if>
 			<equals arg1="${deploy-seek}" arg2="true" />
 			<then>
 				<antcall target="deploy_seek">
 					<param name="deploy.target" value="${deploy.target}" />
-					<param name="server.host" value="${parameters.seek_ws.deploy_host}" />
-					<param name="tomcat.user" value="${parameters.seek_ws.tomcat_user}" />
-					<param name="tomcat.password" value="${seek.tomcat.password}" />
 				</antcall>
 			</then>
 			<else>
@@ -259,9 +178,6 @@
 			<then>
 				<antcall target="deploy_edit">
 					<param name="deploy.target" value="${deploy.target}" />
-					<param name="server.host" value="${parameters.edit_ws.deploy_host}" />
-					<param name="tomcat.user" value="${parameters.edit_ws.tomcat_user}" />
-					<param name="tomcat.password" value="${edit.tomcat.password}" />
 				</antcall>
 
 			</then>
@@ -273,18 +189,6 @@
 			<equals arg1="${deploy-thumbs}" arg2="true" />
 			<then>
 				<antcall target="deploy_thumbs">
-					<param name="deploy.target" value="${deploy.target}" />
-					<param name="server.host" value="${parameters.thumbs_ws.deploy_host}" />
-					<param name="server.user" value="${parameters.thumbs_ws.host_user}" />
-					<param name="tomcat.user" value="${parameters.thumbs_ws.tomcat_user}" />
-					<param name="tomcat.password" value="${thumbs.tomcat.password}" />
-				</antcall>
-				<antcall target="deploy_thumbs_static_resources">
-					<param name="server.host" value="${parameters.thumbs_ws.deploy_host}" />
-					<param name="server.user" value="${parameters.thumbs_ws.host_user}" />
-					<param name="tomcat.user" value="${parameters.thumbs_ws.tomcat_user}" />
-					<param name="tomcat.password" value="${thumbs.tomcat.password}" />
-					<param name="remote.thumbs.dir" value="${parameters.directories.thumbs}" />
 				</antcall>
 			</then>
 			<else>
@@ -313,95 +217,16 @@
 			</else>
 		</if>
 	</target>
-	<target name="create-directories">
-		<antcall target="create-directory">
-			<param name="dir.path" value="${parameters.directories.resources}" />
-			<param name="server.user" value="${parameters.content_ws.host_user}" />
-			<param name="server.host" value="${parameters.content_ws.deploy_host}" />
-		</antcall>
-		<antcall target="create-directory">
-			<param name="dir.path" value="${parameters.directories.previews}" />
-			<param name="server.user" value="${parameters.content_ws.host_user}" />
-			<param name="server.host" value="${parameters.content_ws.deploy_host}" />
-		</antcall>
-		<antcall target="create-directory">
-			<param name="dir.path" value="${parameters.directories.resources}" />
-			<param name="server.user" value="${parameters.edit_ws.host_user}" />
-			<param name="server.host" value="${parameters.edit_ws.deploy_host}" />
-		</antcall>
-		<antcall target="create-directory">
-			<param name="dir.path" value="${parameters.directories.thumbs}" />
-			<param name="server.user" value="${parameters.thumbs_ws.host_user}" />
-			<param name="server.host" value="${parameters.thumbs_ws.deploy_host}" />
-		</antcall>
-		<antcall target="create-directory">
-			<param name="dir.path" value="${parameters.directories.metadata}" />
-			<param name="server.user" value="${parameters.meta_ws.host_user}" />
-			<param name="server.host" value="${parameters.meta_ws.deploy_host}" />
-		</antcall>
-		<antcall target="create-directory">
-			<param name="dir.path" value="${parameters.directories.icons}" />
-			<param name="server.user" value="${parameters.meta_ws.host_user}" />
-			<param name="server.host" value="${parameters.meta_ws.deploy_host}" />
-		</antcall>
-		<antcall target="create-directory">
-			<param name="dir.path" value="${parameters.directories.thumbs}" />
-			<param name="server.user" value="${parameters.thumbs_ws.host_user}" />
-			<param name="server.host" value="${parameters.thumbs_ws.deploy_host}" />
-		</antcall>
-		<antcall target="create-directory">
-			<param name="dir.path" value="${parameters.directories.manifests}" />
-			<param name="server.user" value="${parameters.pack_ws.host_user}" />
-			<param name="server.host" value="${parameters.pack_ws.deploy_host}" />
-		</antcall>
-		<antcall target="create-directory">
-			<param name="dir.path" value="${parameters.directories.remote-solr}" />
-			<param name="server.user" value="${parameters.solr.host_user}" />
-			<param name="server.host" value="${parameters.solr.deploy_host}" />
-		</antcall>
-		<antcall target="create-directory">
-			<param name="dir.path" value="${parameters.directories.remote-test-ui}" />
-			<param name="server.user" value="${parameters.test-ui.host_user}" />
-			<param name="server.host" value="${parameters.test-ui.deploy_host}" />
-		</antcall>
-		<antcall target="create-directory">
-			<param name="dir.path" value="${parameters.directories.remote-display}" />
-			<param name="server.user" value="${parameters.test_display.host_user}" />
-			<param name="server.host" value="${parameters.test_display.deploy_host}" />
-		</antcall>
-		<antcall target="create-directory">
-			<param name="dir.path" value="${parameters.directories.conversions-input}" />
-			<param name="server.user" value="${parameters.previews_ws.host_user}" />
-			<param name="server.host" value="${parameters.previews_ws.deploy_host}" />
-		</antcall>
-		<antcall target="create-directory">
-			<param name="dir.path" value="${parameters.directories.conversions-output}" />
-			<param name="server.user" value="${parameters.previews_ws.host_user}" />
-			<param name="server.host" value="${parameters.previews_ws.deploy_host}" />
-		</antcall>
-	</target>
-	<target name="create-directory">
-		<sshexec failonerror="false" host="${server.host}" username="${server.user}" keyfile="${user.home}/.ssh/id_rsa" knownhosts="${user.home}/.ssh/known_hosts" trust="true" command="mkdir ${dir.path}" />
-		<sshexec failonerror="false" host="${server.host}" username="${server.user}" keyfile="${user.home}/.ssh/id_rsa" knownhosts="${user.home}/.ssh/known_hosts" trust="true" command="chown tomcat7 ${dir.path}" />
-	</target>
 	<target name="sync_solr">
-		<antcall target="create-directory">
-			<param name="dir.path" value="${remote.solr.dir}" />
-			<param name="server.user" value="${server.user}" />
-			<param name="server.host" value="${server.host}" />
-		</antcall>
-		<replace file="${context.file}" token="127.0.0.1" value="${server.host}" />
 		<exec executable="rsync" os="Linux" dir="${basedir}" failonerror="true">
-
 			<arg value="-rvu" />
 			<arg value="--exclude=.svn/" />
+			<arg value="--exclude=.git/" />
+			<arg value="--exclude=.settings/" />
 			<arg value="--exclude=*-data/" />
-
 			<arg value="${local.solr.dir}/" />
-
-			<arg value="${server.user}@${server.host}:${remote.solr.dir}/" />
+			<arg value="${remote.solr.dir}/" />
 		</exec>
-		<sshexec failonerror="false" host="${server.host}" username="${server.user}" keyfile="${user.home}/.ssh/id_rsa" knownhosts="${user.home}/.ssh/known_hosts" trust="true" command="chown -R tomcat7 ${remote.solr.dir}" />
 	</target>
 	<target name="transfer-apiscol-display" description="Display transfer">
 		<copy file="${configs.templates.dir}/context.xml" toFile="${display.dir}/context.xml" overwrite="true">
@@ -442,49 +267,19 @@
 		<copy file="${configs.templates.dir}/content/service.properties" toFile="${content.dir}/WebContent/WEB-INF/service.properties" overwrite="true">
 			<filterset>
 				<filtersfile file="${configs.dir}/${deploy.target}.deploy.tokens.properties" />
-				<filtersfile file="${secrets.tokens.file}" />
 			</filterset>
 		</copy>
-		<war destfile="${basedir}/deploy/content.war" basedir="${content.dir}/WebContent">
+		<war destfile="${parameters.directories.deploy}/content.war" basedir="${content.dir}/WebContent">
 			<classes dir="${content.build.classes.dir}" />
 		</war>
 		<copy file="${configs.templates.dir}/content/service.properties" toFile="${content.dir}/WebContent/WEB-INF/service.properties" overwrite="true">
 			<filterset>
 				<filtersfile file="${configs.dir}/local.deploy.tokens.properties" />
-				<filtersfile file="${secrets.tokens.file}" />
 			</filterset>
 		</copy>
-		<undeploy failonerror="false" url="http://${server.host}/manager/text" path="/content" username="${tomcat.user}" password="${tomcat.password}" />
-		<deploy url="http://${server.host}/manager/text" war="${basedir}/deploy/content.war" path="/content" username="${tomcat.user}" password="${tomcat.password}" />
 		<delete file="${basedir}/deploy/content.war" />
 	</target>
-	<target name="deploy_content_static_resources">
-		<copy file="${configs.templates.dir}/context.xml" toFile="${content.dir}/context1.xml" overwrite="true">
-			<filterset>
-				<filter token="path" value="/content/resources" />
-				<filter token="docbase" value="${remote.content.dir}" />
-			</filterset>
-		</copy>
-		<copy file="${configs.templates.dir}/context.xml" toFile="${content.dir}/context2.xml" overwrite="true">
-			<filterset>
-				<filter token="path" value="/content/previews" />
-				<filter token="docbase" value="${remote.previews.dir}" />
-			</filterset>
-		</copy>
-		<scp todir="${server.user}@${server.host}:/home/${server.user}" keyfile="${user.home}/.ssh/id_rsa" trust="true" verbose="false" failonerror="false">
-			<fileset dir="${content.dir}">
-				<filename name="context*.xml" />
-			</fileset>
-		</scp>
-		<undeploy failonerror="false" url="http://${server.host}/manager/text" path="/content/resources" username="${tomcat.user}" password="${tomcat.password}" />
-		<deploy url="http://${server.host}/manager/text" config="/home/${server.user}/context1.xml" path="/content/resources" username="${tomcat.user}" password="${tomcat.password}" />
-		<undeploy failonerror="false" url="http://${server.host}/manager/text" path="/content/previews" username="${tomcat.user}" password="${tomcat.password}" />
-		<deploy url="http://${server.host}/manager/text" config="/home/${server.user}/context2.xml" path="/content/previews" username="${tomcat.user}" password="${tomcat.password}" />
-		<delete file="${content.dir}/context1.xml">
-		</delete>
-		<delete file="${content.dir}/context2.xml">
-		</delete>
-	</target>
+
 	<target name="deploy_edit">
 		<mkdir dir="${edit.dir}/build/classes" />
 		<javac srcdir="${edit.dir}/src" destdir="${edit.dir}/build/classes" includeantruntime="false">
@@ -500,21 +295,16 @@
 		<copy file="${configs.templates.dir}/edit/service.properties" toFile="${edit.dir}/WebContent/WEB-INF/service.properties" overwrite="true">
 			<filterset>
 				<filtersfile file="${configs.dir}/${deploy.target}.deploy.tokens.properties" />
-				<filtersfile file="${secrets.tokens.file}" />
 			</filterset>
 		</copy>
-		<war destfile="${basedir}/deploy/edit.war" basedir="${edit.dir}/WebContent">
+		<war destfile="${parameters.directories.deploy}/edit.war" basedir="${edit.dir}/WebContent">
 			<classes dir="${edit.build.classes.dir}" />
 		</war>
 		<copy file="${configs.templates.dir}/edit/service.properties" toFile="${edit.dir}/WebContent/WEB-INF/service.properties" overwrite="true">
 			<filterset>
 				<filtersfile file="${configs.dir}/local.deploy.tokens.properties" />
-				<filtersfile file="${secrets.tokens.file}" />
 			</filterset>
 		</copy>
-		<undeploy failonerror="false" url="http://${server.host}/manager/text" path="/edit" username="${tomcat.user}" password="${tomcat.password}" />
-		<deploy url="http://${server.host}/manager/text" war="${basedir}/deploy/edit.war" path="/edit" username="${tomcat.user}" password="${tomcat.password}" />
-		<delete file="${basedir}/deploy/edit.war" />
 	</target>
 
 	<target name="deploy_meta">
@@ -532,117 +322,21 @@
 		<copy file="${configs.templates.dir}/meta/service.properties" toFile="${meta.dir}/WebContent/WEB-INF/service.properties" overwrite="true">
 			<filterset>
 				<filtersfile file="${configs.dir}/${deploy.target}.deploy.tokens.properties" />
-				<filtersfile file="${secrets.tokens.file}" />
 			</filterset>
 		</copy>
-		<war destfile="${basedir}/deploy/meta.war" basedir="${meta.dir}/WebContent">
+		<war destfile="${parameters.directories.deploy}/meta.war" basedir="${meta.dir}/WebContent">
 			<classes dir="${meta.build.classes.dir}" />
 		</war>
 		<copy file="${configs.templates.dir}/meta/service.properties" toFile="${meta.dir}/WebContent/WEB-INF/service.properties" overwrite="true">
 			<filterset>
 				<filtersfile file="${configs.dir}/local.deploy.tokens.properties" />
-				<filtersfile file="${secrets.tokens.file}" />
 			</filterset>
 		</copy>
-		<undeploy failonerror="false" url="http://${server.host}/manager/text" path="/meta" username="${tomcat.user}" password="${tomcat.password}" />
-		<deploy url="http://${server.host}/manager/text" war="${basedir}/deploy/meta.war" path="/meta" username="${tomcat.user}" password="${tomcat.password}" />
-		<delete file="${basedir}/deploy/meta.war" />
+
 
 	</target>
-	<target name="deploy_meta_static_resources">
-		<copy file="${configs.templates.dir}/context.xml" toFile="${meta.dir}/context1.xml" overwrite="true">
-			<filterset>
-				<filter token="path" value="/meta/lom" />
-				<filter token="docbase" value="${remote.meta.dir}" />
-			</filterset>
-		</copy>
-		<copy file="${configs.templates.dir}/context.xml" toFile="${meta.dir}/context2.xml" overwrite="true">
-			<filterset>
-				<filter token="path" value="/meta/icons" />
-				<filter token="docbase" value="${remote.icons.dir}" />
-			</filterset>
-		</copy>
-		<copy file="${configs.templates.dir}/context.nocache.xml" toFile="${meta.dir}/context3.xml" overwrite="true">
-			<filterset>
-				<filter token="path" value="/meta/lom/nocache" />
-				<filter token="docbase" value="${remote.meta.dir}" />
-			</filterset>
-		</copy>
-		<scp todir="${server.user}@${server.host}:/home/${server.user}" keyfile="${user.home}/.ssh/id_rsa" trust="true" verbose="false" failonerror="false">
-			<fileset dir="${meta.dir}">
-				<filename name="context*.xml" />
-			</fileset>
-		</scp>
 
-		<undeploy failonerror="false" url="http://${server.host}/manager/text" path="/meta/lom" username="${tomcat.user}" password="${tomcat.password}" />
-		<deploy url="http://${server.host}/manager/text" config="/home/${server.user}/context1.xml" path="/meta/lom" username="${tomcat.user}" password="${tomcat.password}" />
-		<undeploy failonerror="false" url="http://${server.host}/manager/text" path="/meta/icons" username="${tomcat.user}" password="${tomcat.password}" />
-		<deploy url="http://${server.host}/manager/text" config="/home/${server.user}/context2.xml" path="/meta/icons" username="${tomcat.user}" password="${tomcat.password}" />
-		<undeploy failonerror="false" url="http://${server.host}/manager/text" path="/meta/lom/nocache" username="${tomcat.user}" password="${tomcat.password}" />
-		<deploy url="http://${server.host}/manager/text" config="/home/${server.user}/context3.xml" path="/meta/lom/nocache" username="${tomcat.user}" password="${tomcat.password}" />
-		<delete file="${meta.dir}/context1.xml">
-		</delete>
-		<delete file="${meta.dir}/context2.xml">
-		</delete>
-		<delete file="${meta.dir}/context3.xml">
-		</delete>
-		<exec executable="rsync" os="Linux" dir="${basedir}" failonerror="true">
-			<arg value="-rvu" />
-			<arg value="--exclude=.svn/" />
-			<arg value="${local.icons.dir}/" />
-			<arg value="${server.user}@${server.host}:${remote.icons.dir}/" />
-		</exec>
-		<sshexec failonerror="false" host="${server.host}" username="${server.user}" keyfile="${user.home}/.ssh/id_rsa" knownhosts="${user.home}/.ssh/known_hosts" trust="true" command="chown -R tomcat7 ${remote.icons.dir}" />
 
-	</target>
-	<target name="deploy_pack">
-		<mkdir dir="${pack.dir}/build/classes" />
-		<javac srcdir="${pack.dir}/src" destdir="${pack.dir}/build/classes" includeantruntime="false">
-			<classpath>
-
-				<fileset dir="${pack.dir}/WebContent/WEB-INF/lib">
-					<include name="*.jar" />
-				</fileset>
-				<path refid="compilation.path">
-				</path>
-			</classpath>
-		</javac>
-		<copy file="${configs.templates.dir}/pack/service.properties" toFile="${pack.dir}/WebContent/WEB-INF/service.properties" overwrite="true">
-			<filterset>
-				<filtersfile file="${configs.dir}/${deploy.target}.deploy.tokens.properties" />
-				<filtersfile file="${secrets.tokens.file}" />
-			</filterset>
-		</copy>
-		<war destfile="${basedir}/deploy/pack.war" basedir="${pack.dir}/WebContent">
-			<classes dir="${pack.build.classes.dir}" />
-		</war>
-		<copy file="${configs.templates.dir}/pack/service.properties" toFile="${pack.dir}/WebContent/WEB-INF/service.properties" overwrite="true">
-			<filterset>
-				<filtersfile file="${configs.dir}/local.deploy.tokens.properties" />
-				<filtersfile file="${secrets.tokens.file}" />
-			</filterset>
-		</copy>
-		<undeploy failonerror="false" url="http://${server.host}/manager/text" path="/pack" username="${tomcat.user}" password="${tomcat.password}" />
-		<deploy url="http://${server.host}/manager/text" war="${basedir}/deploy/pack.war" path="/pack" username="${tomcat.user}" password="${tomcat.password}" />
-		<delete file="${basedir}/deploy/pack.war" />
-	</target>
-	<target name="deploy_pack_static_resources">
-		<copy file="${configs.templates.dir}/context.xml" toFile="${pack.dir}/context.xml" overwrite="true">
-			<filterset>
-				<filter token="path" value="/pack/manifests" />
-				<filter token="docbase" value="${remote.manifests.dir}" />
-			</filterset>
-		</copy>
-		<scp todir="${server.user}@${server.host}:/home/${server.user}" keyfile="${user.home}/.ssh/id_rsa" trust="true" verbose="false" failonerror="false">
-			<fileset dir="${pack.dir}">
-				<filename name="context.xml" />
-			</fileset>
-		</scp>
-		<undeploy failonerror="false" url="http://${server.host}/manager/text" path="/pack/manifests" username="${tomcat.user}" password="${tomcat.password}" />
-		<deploy url="http://${server.host}/manager/text" config="/home/${server.user}/context.xml" path="/pack/manifests" username="${tomcat.user}" password="${tomcat.password}" />
-		<delete file="${pack.dir}/context.xml">
-		</delete>
-	</target>
 	<target name="deploy_seek">
 		<mkdir dir="${seek.dir}/build/classes" />
 		<javac srcdir="${seek.dir}/src" destdir="${seek.dir}/build/classes" includeantruntime="false">
@@ -657,21 +351,16 @@
 		<copy file="${configs.templates.dir}/seek/service.properties" toFile="${seek.dir}/WebContent/WEB-INF/service.properties" overwrite="true">
 			<filterset>
 				<filtersfile file="${configs.dir}/${deploy.target}.deploy.tokens.properties" />
-				<filtersfile file="${secrets.tokens.file}" />
 			</filterset>
 		</copy>
-		<war destfile="${basedir}/deploy/seek.war" basedir="${seek.dir}/WebContent">
+		<war destfile="${parameters.directories.deploy}/seek.war" basedir="${seek.dir}/WebContent">
 			<classes dir="${seek.build.classes.dir}" />
 		</war>
 		<copy file="${configs.templates.dir}/seek/service.properties" toFile="${seek.dir}/WebContent/WEB-INF/service.properties" overwrite="true">
 			<filterset>
 				<filtersfile file="${configs.dir}/local.deploy.tokens.properties" />
-				<filtersfile file="${secrets.tokens.file}" />
 			</filterset>
 		</copy>
-		<undeploy failonerror="false" url="http://${server.host}/manager/text" path="/seek" username="${tomcat.user}" password="${tomcat.password}" />
-		<deploy url="http://${server.host}/manager/text" war="${basedir}/deploy/seek.war" path="/seek" username="${tomcat.user}" password="${tomcat.password}" />
-		<delete file="${basedir}/deploy/seek.war" />
 	</target>
 	<target name="deploy_thumbs">
 		<mkdir dir="${thumbs.dir}/build/classes" />
@@ -688,38 +377,11 @@
 		<copy file="${configs.templates.dir}/thumbs/service.properties" toFile="${thumbs.dir}/WebContent/WEB-INF/service.properties" overwrite="true">
 			<filterset>
 				<filtersfile file="${configs.dir}/${deploy.target}.deploy.tokens.properties" />
-				<filtersfile file="${secrets.tokens.file}" />
 			</filterset>
 		</copy>
-		<war destfile="${basedir}/deploy/thumbs.war" basedir="${thumbs.dir}/WebContent">
+		<war destfile="${parameters.directories.deploy}/thumbs.war" basedir="${thumbs.dir}/WebContent">
 			<classes dir="${thumbs.build.classes.dir}" />
 		</war>
-		<copy file="${configs.templates.dir}/thumbs/service.properties" toFile="${thumbs.dir}/WebContent/WEB-INF/service.properties" overwrite="true">
-			<filterset>
-				<filtersfile file="${configs.dir}/local.deploy.tokens.properties" />
-				<filtersfile file="${secrets.tokens.file}" />
-			</filterset>
-		</copy>
-		<undeploy failonerror="false" url="http://${server.host}/manager/text" path="/thumbs" username="${tomcat.user}" password="${tomcat.password}" />
-		<deploy url="http://${server.host}/manager/text" war="${basedir}/deploy/thumbs.war" path="/thumbs" username="${tomcat.user}" password="${tomcat.password}" />
-		<delete file="${basedir}/deploy/thumbs.war" />
-	</target>
-	<target name="deploy_thumbs_static_resources">
-		<copy file="${configs.templates.dir}/context.xml" toFile="${thumbs.dir}/context.xml" overwrite="true">
-			<filterset>
-				<filter token="path" value="/thumbs/files" />
-				<filter token="docbase" value="${remote.thumbs.dir}" />
-			</filterset>
-		</copy>
-		<scp todir="${server.user}@${server.host}:/home/${server.user}" keyfile="${user.home}/.ssh/id_rsa" trust="true" verbose="false" failonerror="false">
-			<fileset dir="${thumbs.dir}">
-				<filename name="context.xml" />
-			</fileset>
-		</scp>
-		<undeploy failonerror="false" url="http://${server.host}/manager/text" path="/thumbs/files" username="${tomcat.user}" password="${tomcat.password}" />
-		<deploy url="http://${server.host}/manager/text" config="/home/${server.user}/context.xml" path="/thumbs/files" username="${tomcat.user}" password="${tomcat.password}" />
-		<delete file="${thumbs.dir}/context.xml">
-		</delete>
 	</target>
 	<target name="deploy_previews">
 		<mkdir dir="${previews.dir}/build/classes" />
@@ -736,7 +398,6 @@
 		<copy file="${configs.templates.dir}/previews/service.properties" toFile="${previews.dir}/WebContent/WEB-INF/service.properties" overwrite="true">
 			<filterset>
 				<filtersfile file="${configs.dir}/${deploy.target}.deploy.tokens.properties" />
-				<filtersfile file="${secrets.tokens.file}" />
 			</filterset>
 		</copy>
 		<war destfile="${basedir}/deploy/previews.war" basedir="${previews.dir}/WebContent">
@@ -745,7 +406,6 @@
 		<copy file="${configs.templates.dir}/previews/service.properties" toFile="${previews.dir}/WebContent/WEB-INF/service.properties" overwrite="true">
 			<filterset>
 				<filtersfile file="${configs.dir}/local.deploy.tokens.properties" />
-				<filtersfile file="${secrets.tokens.file}" />
 			</filterset>
 		</copy>
 		<undeploy failonerror="false" url="http://${server.host}/manager/text" path="/previews" username="${tomcat.user}" password="${tomcat.password}" />
@@ -770,12 +430,6 @@
 		</delete>
 	</target>
 	<target name="transfer-test-ui" description="Test UI transfer">
-		<copy file="${configs.templates.dir}/context.xml" toFile="${test-ui.dir}/WebContent/context.xml" overwrite="true">
-			<filterset>
-				<filter token="path" value="/tests" />
-				<filter token="docbase" value="${remote.test-ui.dir}" />
-			</filterset>
-		</copy>
 		<replace file="${control-panel-jsfile}" token="http://${local.server.host}:${local.server.port}" value="http://${server.host}" />
 		<replace file="${control-panel-jsfile}" token="https://${local.server.host}:8443" value="https://${server.host}:${remote.ssl.server.port}" />
 		<replace file="${integrated-search-jsfile}" token="http://${local.server.host}:${local.server.port}" value="http://${server.host}" />
@@ -787,10 +441,5 @@
 		<replace file="${control-panel-jsfile}" value="https://${server.host}:${remote.ssl.server.port}" token="https://${local.server.host}:8443" />
 		<replace file="${control-panel-jsfile}" value="http://${local.server.host}:${local.server.port}" token="http://${server.host}" />
 		<replace file="${integrated-search-jsfile}" value="http://${local.server.host}:${local.server.port}" token="http://${server.host}" />
-		<replace file="${pack-test-html}" value="http://${local.server.host}:${local.server.port}" token="http://${server.host}" />
-		<!--<delete file="${test-ui.dir}/WebContent/context.xml">
-		</delete>-->
-		<undeploy failonerror="false" url="http://${server.host}/manager/text" path="/tests" username="${tomcat.user}" password="${tomcat.password}" />
-		<deploy url="http://${server.host}/manager/text" config="${remote.test-ui.dir}/context.xml" path="/tests" username="${tomcat.user}" password="${tomcat.password}" />
 	</target>
 </project>

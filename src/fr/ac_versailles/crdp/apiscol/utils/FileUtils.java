@@ -332,10 +332,21 @@ public class FileUtils {
 
 	public static void writeStringToFile(String filePath, String string)
 			throws IOException {
-		FileWriter fstream = new FileWriter(filePath);
-		BufferedWriter out = new BufferedWriter(fstream);
-		out.write(string);
-		out.close();
+		FileWriter fstream = null;
+		BufferedWriter out = null;
+		try {
+			fstream = new FileWriter(filePath);
+			out = new BufferedWriter(fstream);
+			out.write(string);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			if (out != null)
+				out.close();
+			if (fstream != null)
+				fstream.close();
+		}
 
 	}
 
@@ -351,8 +362,10 @@ public class FileUtils {
 				e2.printStackTrace();
 			}
 		Writer htmlOutput = null;
+		FileWriter fileWriter = null;
 		try {
-			htmlOutput = new BufferedWriter(new FileWriter(filePath));
+			fileWriter = new FileWriter(filePath);
+			htmlOutput = new BufferedWriter(fileWriter);
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -370,7 +383,11 @@ public class FileUtils {
 			e.printStackTrace();
 		} finally {
 			try {
-				htmlOutput.close();
+				if (fileWriter != null)
+					fileWriter.close();
+				if (htmlOutput != null)
+					htmlOutput.close();
+				reader.close();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -382,14 +399,28 @@ public class FileUtils {
 	public static void writeStreamToFile(InputStream uploadedInputStream,
 			File file) throws IOException {
 		file.getParentFile().mkdirs();
-		OutputStream out = new FileOutputStream(file);
-		int read = 0;
-		byte[] bytes = new byte[1024];
-		while ((read = uploadedInputStream.read(bytes)) != -1) {
-			out.write(bytes, 0, read);
+		OutputStream out = null;
+		try {
+			out = new FileOutputStream(file);
+			int read = 0;
+			byte[] bytes = new byte[1024];
+			while ((read = uploadedInputStream.read(bytes)) != -1) {
+				out.write(bytes, 0, read);
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			if (out != null) {
+				out.flush();
+				out.close();
+			}
+
+			uploadedInputStream.close();
 		}
-		out.flush();
-		out.close();
 
 	}
 }
