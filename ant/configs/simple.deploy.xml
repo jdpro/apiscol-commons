@@ -9,13 +9,13 @@
 		<remote-solr>solr</remote-solr>
 		<resources>C:\Depot\resources</resources>
 		<thumbs>C:\Depot\thumbs</thumbs>
-		<metadata>C:\Depot\meta</metadata>
-		<icons>C:\Depot\icons</icons>
-		<manifests>C:\Depot\manifests</manifests>
-		<previews>C:\Depot\previews</previews>
-		<conversions-input>C:\Depot\input</conversions-input>
-		<conversions-output>C:\Depot\output</conversions-output>
-		<remote-display>C:\Depot\display</remote-display>
-		<remote-test-ui>C:\Depot\test_ui</remote-test-ui>
+		<metadata>C:\ApiScol\Depot\meta</metadata>
+		<icons>C:\ApiScol\Depot\icons</icons>
+		<manifests>C:\ApiScol\Depot\manifests</manifests>
+		<previews>C:\ApiScol\Depot\previews</previews>
+		<conversions-input>C:\ApiScol\Depot\input</conversions-input>
+		<conversions-output>C:\ApiScol\Depot\output</conversions-output>
+		<remote-display>C:\ApiScol\Depot\display</remote-display>
+		<remote-test-ui>C:\ApiScol\Depot\test_ui</remote-test-ui>
 	</directories>
 </parameters>
