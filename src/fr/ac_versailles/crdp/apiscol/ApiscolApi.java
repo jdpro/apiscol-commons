@@ -4,6 +4,8 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
@@ -12,6 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.lf5.LogLevel;
+import org.apache.naming.NamingContext;
 
 import fr.ac_versailles.crdp.apiscol.RequestHandler;
 import fr.ac_versailles.crdp.apiscol.transactions.KeyLock;
@@ -23,6 +26,8 @@ public class ApiscolApi {
 	private static Properties properties;
 	protected static Logger logger;
 	protected static String version;
+	private static InitialContext c;
+	private static NamingContext initialContextContainer;
 	protected KeyLockManager keyLockManager;
 
 	public ApiscolApi(@Context ServletContext context) {
@@ -86,6 +91,15 @@ public class ApiscolApi {
 	}
 
 	public static String getProperty(ParametersKeys key, ServletContext context) {
+		String property = getPropertyFromInitialContext(key);
+		if (property != null) {
+			logger.debug("The following property was overriden by host initial xml context : "
+					+ key.toString());
+			return property;
+		} else
+			logger.debug("The following property was not found in  host initial xml context : "
+					+ key.toString());
+
 		loadProperties(context);
 
 		if (!properties.containsKey(key.toString())) {
@@ -93,6 +107,30 @@ public class ApiscolApi {
 					+ key.toString());
 		}
 		return properties.getProperty(key.toString());
+	}
+
+	public static String getPropertyFromInitialContext(final ParametersKeys key) {
+
+		if (key == null)
+			return null;
+
+		try {
+			final Object object = getHostContext().lookup(key.toString());
+			if (object != null)
+				return object.toString();
+		} catch (Exception e) {
+			logger.debug(e.getMessage());
+			return null;
+		}
+		return null;
+
+	}
+
+	private static NamingContext getHostContext() throws NamingException {
+		if (initialContextContainer == null)
+			initialContextContainer = (NamingContext) new InitialContext()
+					.lookup("java:comp/env");
+		return initialContextContainer;
 	}
 
 	protected String guessRequestedFormat(HttpServletRequest request,

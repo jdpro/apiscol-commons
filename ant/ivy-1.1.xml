@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor 
+	license agreements. See the NOTICE file distributed with this work for additional 
+	information regarding copyright ownership. The ASF licenses this file to 
+	you under the Apache License, Version 2.0 (the "License"); you may not use 
+	this file except in compliance with the License. You may obtain a copy of 
+	the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required 
+	by applicable law or agreed to in writing, software distributed under the 
+	License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS 
+	OF ANY KIND, either express or implied. See the License for the specific 
+	language governing permissions and limitations under the License. -->
+<ivy-module version="2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd" xmlns:m="http://ant.apache.org/ivy/maven">
+	<info organisation="crdp_versailles" module="apiscol-commons" revision="1.1" status="release" publication="20150508154418">
+	</info>
+	<configurations>
+		<conf name="commons" description="commons classes publication"/>
+	</configurations>
+	<publications> 
+		<artifact name="apiscol-commons" type="jar" ext="jar" conf="commons"/>
+	</publications>
+	<dependencies>
+	
+            <dependency org="com.sun.jersey" name="jersey-core" rev="1.17.1" conf="commons->default"/>
+		<dependency org="commons-lang" name="commons-lang" rev="2.6" conf="commons->default"/>
+		<dependency org="log4j" name="log4j" rev="1.2.17"/>
+            		<dependency org="joda-time" name="joda-time" rev="2.2" conf="commons->default"/>
+		<dependency org="org.mongodb" name="mongo-java-driver" rev="2.11.0" conf="commons->default"/>            
+		<dependency org="net.sf.json-lib" name="json-lib" rev="2.4" conf="commons->default" transitive="false">
+			<artifact name="json-lib" type="jar" m:classifier="jdk15"/>
+		</dependency>
+	</dependencies>
+</ivy-module>

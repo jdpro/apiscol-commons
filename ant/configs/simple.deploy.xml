@@ -7,8 +7,8 @@
 	<directories>
 		<deploy>/home/joachim/apiscol_win_8</deploy>
 		<remote-solr>solr</remote-solr>
-		<resources>C:\Depot\resources</resources>
-		<thumbs>C:\Depot\thumbs</thumbs>
+		<resources>C:\ApiScol\Depot\resources</resources>
+		<thumbs>C:\ApiScol\Depot\thumbs</thumbs>
 		<metadata>C:\ApiScol\Depot\meta</metadata>
 		<icons>C:\ApiScol\Depot\icons</icons>
 		<manifests>C:\ApiScol\Depot\manifests</manifests>
