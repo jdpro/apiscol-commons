@@ -378,6 +378,8 @@ public class FileUtils {
 				htmlOutput.write(data);
 				data = reader.read();
 			}
+
+			htmlOutput.flush();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

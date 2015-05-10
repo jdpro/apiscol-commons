@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE project>
-<project default="main" basedir="../.." name="Déploiement de l'ensemble des services">
+<project default="main" basedir="../.."
+	name="Déploiement de l'ensemble des services">
 	<taskdef name="deploy" classname="org.apache.catalina.ant.DeployTask" />
 	<taskdef name="undeploy" classname="org.apache.catalina.ant.UndeployTask" />
 	<taskdef name="if" classname="net.sf.antcontrib.logic.IfTask" />
@@ -24,10 +25,13 @@
 	<property name="thumbs.build.classes.dir" value="${thumbs.dir}/build/classes" />
 	<property name="previews.build.classes.dir" value="${previews.dir}/build/classes" />
 	<property name="local.icons.dir" value="${basedir}/ApiScol_CDN/icons" />
-	<property name="notice-jsfile" value="${display.dir}/apiscol.0.0.0/js/jquery-ui.apiscol.js" />
+	<property name="notice-jsfile"
+		value="${display.dir}/apiscol.0.0.0/js/jquery-ui.apiscol.js" />
 	<property name="notice-htmlfile" value="${display.dir}/testdisplay-notice.html" />
-	<property name="control-panel-jsfile" value="${test-ui.dir}/WebContent/js/control_panel_test_ui.js" />
-	<property name="integrated-search-jsfile" value="${test-ui.dir}/WebContent/js/integrated_search_test_ui.js" />
+	<property name="control-panel-jsfile"
+		value="${test-ui.dir}/WebContent/js/control_panel_test_ui.js" />
+	<property name="integrated-search-jsfile"
+		value="${test-ui.dir}/WebContent/js/integrated_search_test_ui.js" />
 	<property name="local.test-ui.dir" value="${test-ui.dir}/WebContent/" />
 	<property name="passwords.dir" value="${basedir}/deploy">
 	</property>
@@ -53,29 +57,41 @@
 
 
 	<target name="main">
-		<input message="Deploy test UI ?" validargs="true,false" addproperty="deploy-test-ui" defaultvalue="false" />
-		<input message="Deploy display UI ?" validargs="true,false" addproperty="deploy-display" defaultvalue="false" />
-		<input message="Deploy meta ?" validargs="true,false" addproperty="deploy-meta" defaultvalue="false" />
-		<input message="Deploy content ?" validargs="true,false" addproperty="deploy-content" defaultvalue="false" />
-		<input message="Deploy edit ?" validargs="true,false" addproperty="deploy-edit" defaultvalue="false" />
-		<input message="Deploy thumbs ?" validargs="true,false" addproperty="deploy-thumbs" defaultvalue="false" />
-		<input message="Deploy seek ?" validargs="true,false" addproperty="deploy-seek" defaultvalue="false" />
-		<input message="Deploy previews ?" validargs="true,false" addproperty="deploy-previews" defaultvalue="false" />
+		<input message="Deploy test UI ?" validargs="true,false"
+			addproperty="deploy-test-ui" defaultvalue="false" />
+		<input message="Deploy display UI ?" validargs="true,false"
+			addproperty="deploy-display" defaultvalue="false" />
+		<input message="Deploy meta ?" validargs="true,false"
+			addproperty="deploy-meta" defaultvalue="false" />
+		<input message="Deploy content ?" validargs="true,false"
+			addproperty="deploy-content" defaultvalue="false" />
+		<input message="Deploy edit ?" validargs="true,false"
+			addproperty="deploy-edit" defaultvalue="false" />
+		<input message="Deploy thumbs ?" validargs="true,false"
+			addproperty="deploy-thumbs" defaultvalue="false" />
+		<input message="Deploy seek ?" validargs="true,false"
+			addproperty="deploy-seek" defaultvalue="false" />
+		<input message="Deploy previews ?" validargs="true,false"
+			addproperty="deploy-previews" defaultvalue="false" />
 		<echo message="Loading password file for target ${deploy.target}">
 		</echo>
-		<echo message="Loading deployment configuration for target ${deploy.target} ${configs.dir}/${deploy.target}.deploy.xml">
+		<echo
+			message="Loading deployment configuration for target ${deploy.target} ${configs.dir}/${deploy.target}.deploy.xml">
 		</echo>
-		<xmlproperty file="${configs.dir}/${deploy.target}.deploy.xml" keeproot="true" />
+		<xmlproperty file="${configs.dir}/${deploy.target}.deploy.xml"
+			keeproot="true" />
 		<if>
 			<available file="${passwords.dir}/properties.common" />
 			<then>
 				<loadproperties srcFile="${passwords.dir}/properties.common" />
 			</then>
 			<else>
-				<echo message="Deployment configuration ${deploy.target} ${configs.dir}/${deploy.target}.deploy.xml for target ${deploy.target} NOT FOUND !" />
+				<echo
+					message="Deployment configuration ${deploy.target} ${configs.dir}/${deploy.target}.deploy.xml for target ${deploy.target} NOT FOUND !" />
 			</else>
 		</if>
-		<xmlproperty file="${configs.dir}/eclipse.local.xml" keeproot="true" />
+		<xmlproperty file="${configs.dir}/eclipse.local.xml"
+			keeproot="true" />
 		<if>
 			<equals arg1="${deploy-test-ui}" arg2="true" />
 			<then>
@@ -169,13 +185,6 @@
 					<param name="tomcat.user" value="${parameters.previews_ws.tomcat_user}" />
 					<param name="tomcat.password" value="${previews.tomcat.password}" />
 				</antcall>
-				<antcall target="deploy_previews_static_resources">
-					<param name="server.host" value="${parameters.previews_ws.deploy_host}" />
-					<param name="server.user" value="${parameters.previews_ws.host_user}" />
-					<param name="tomcat.user" value="${parameters.previews_ws.tomcat_user}" />
-					<param name="tomcat.password" value="${previews.tomcat.password}" />
-					<param name="remote.previews.output.dir" value="${parameters.directories.conversions-output}" />
-				</antcall>
 			</then>
 			<else>
 				<echo message="Previews ws will not be deployed" />
@@ -184,27 +193,35 @@
 	</target>
 
 	<target name="transfer-apiscol-display" description="Display transfer">
-		<copy file="${configs.templates.dir}/context.xml" toFile="${display.dir}/context.xml" overwrite="true">
+		<copy file="${configs.templates.dir}/context.xml" toFile="${display.dir}/context.xml"
+			overwrite="true">
 			<filterset>
 				<filter token="path" value="/display" />
 				<filter token="docbase" value="${remote.display.dir}" />
 			</filterset>
 		</copy>
-		<replace file="${notice-htmlfile}" token="http://${local.server.host}:${local.server.port}" value="http://${server.host}" />
-		<scp todir="${server.user}@${server.host}:${remote.display.dir}" keyfile="${user.home}/.ssh/id_rsa" trust="true" verbose="false" failonerror="false">
+		<replace file="${notice-htmlfile}"
+			token="http://${local.server.host}:${local.server.port}" value="http://${server.host}" />
+		<scp todir="${server.user}@${server.host}:${remote.display.dir}"
+			keyfile="${user.home}/.ssh/id_rsa" trust="true" verbose="false"
+			failonerror="false">
 			<fileset dir="${display.dir}">
 				<exclude name="**/*svn*" />
 			</fileset>
 		</scp>
-		<replace file="${notice-htmlfile}" value="http://${local.server.host}:${local.server.port}" token="http://${server.host}" />
+		<replace file="${notice-htmlfile}"
+			value="http://${local.server.host}:${local.server.port}" token="http://${server.host}" />
 		<delete file="${display.dir}/context.xml">
 		</delete>
-		<undeploy failonerror="false" url="http://${server.host}/manager/text" path="/display" username="${tomcat.user}" password="${tomcat.password}" />
-		<deploy url="http://${server.host}/manager/text" config="${remote.display.dir}/context.xml" path="/display" username="${tomcat.user}" password="${tomcat.password}" />
+		<undeploy failonerror="false" url="http://${server.host}/manager/text"
+			path="/display" username="${tomcat.user}" password="${tomcat.password}" />
+		<deploy url="http://${server.host}/manager/text" config="${remote.display.dir}/context.xml"
+			path="/display" username="${tomcat.user}" password="${tomcat.password}" />
 	</target>
 	<target name="deploy_content">
 		<mkdir dir="${content.dir}/build/classes" />
-		<javac srcdir="${content.dir}/src" destdir="${content.dir}/build/classes" includeantruntime="false">
+		<javac srcdir="${content.dir}/src" destdir="${content.dir}/build/classes"
+			includeantruntime="false">
 			<classpath>
 
 				<fileset dir="${content.dir}/WebContent/WEB-INF/lib">
@@ -213,14 +230,16 @@
 				<path refid="compilation.path">
 				</path>
 			</classpath>
-		</javac>		
-		<war destfile="${parameters.directories.deploy}/content.war" basedir="${content.dir}/WebContent">
+		</javac>
+		<war destfile="${parameters.directories.deploy}/content.war"
+			basedir="${content.dir}/WebContent">
 			<classes dir="${content.build.classes.dir}" />
-		</war>		
+		</war>
 	</target>
 	<target name="deploy_edit">
 		<mkdir dir="${edit.dir}/build/classes" />
-		<javac srcdir="${edit.dir}/src" destdir="${edit.dir}/build/classes" includeantruntime="false">
+		<javac srcdir="${edit.dir}/src" destdir="${edit.dir}/build/classes"
+			includeantruntime="false">
 			<classpath>
 
 				<fileset dir="${edit.dir}/WebContent/WEB-INF/lib">
@@ -236,7 +255,8 @@
 	</target>
 	<target name="deploy_meta">
 		<mkdir dir="${meta.dir}/build/classes" />
-		<javac srcdir="${meta.dir}/src" destdir="${meta.dir}/build/classes" includeantruntime="false">
+		<javac srcdir="${meta.dir}/src" destdir="${meta.dir}/build/classes"
+			includeantruntime="false">
 			<classpath>
 
 				<fileset dir="${meta.dir}/WebContent/WEB-INF/lib">
@@ -252,7 +272,8 @@
 	</target>
 	<target name="deploy_seek">
 		<mkdir dir="${seek.dir}/build/classes" />
-		<javac srcdir="${seek.dir}/src" destdir="${seek.dir}/build/classes" includeantruntime="false">
+		<javac srcdir="${seek.dir}/src" destdir="${seek.dir}/build/classes"
+			includeantruntime="false">
 			<classpath>
 				<fileset dir="${seek.dir}/WebContent/WEB-INF/lib">
 					<include name="*.jar" />
@@ -267,7 +288,8 @@
 	</target>
 	<target name="deploy_thumbs">
 		<mkdir dir="${thumbs.dir}/build/classes" />
-		<javac srcdir="${thumbs.dir}/src" destdir="${thumbs.dir}/build/classes" includeantruntime="false">
+		<javac srcdir="${thumbs.dir}/src" destdir="${thumbs.dir}/build/classes"
+			includeantruntime="false">
 			<classpath>
 				<fileset dir="${thumbs.dir}/WebContent/WEB-INF/lib">
 					<include name="*.jar" />
@@ -276,13 +298,15 @@
 				</path>
 			</classpath>
 		</javac>
-		<war destfile="${parameters.directories.deploy}/thumbs.war" basedir="${thumbs.dir}/WebContent">
+		<war destfile="${parameters.directories.deploy}/thumbs.war"
+			basedir="${thumbs.dir}/WebContent">
 			<classes dir="${thumbs.build.classes.dir}" />
 		</war>
 	</target>
 	<target name="deploy_previews">
 		<mkdir dir="${previews.dir}/build/classes" />
-		<javac srcdir="${previews.dir}/src" destdir="${previews.dir}/build/classes" includeantruntime="false">
+		<javac srcdir="${previews.dir}/src" destdir="${previews.dir}/build/classes"
+			includeantruntime="false">
 			<classpath>
 
 				<fileset dir="${previews.dir}/WebContent/WEB-INF/lib">
@@ -292,37 +316,29 @@
 				</path>
 			</classpath>
 		</javac>
-		<war destfile="${parameters.directories.deploy}/previews.war" basedir="${previews.dir}/WebContent">
+		<war destfile="${parameters.directories.deploy}/previews.war"
+			basedir="${previews.dir}/WebContent">
 			<classes dir="${previews.build.classes.dir}" />
 		</war>
 	</target>
-	<target name="deploy_previews_static_resources">
-		<copy file="${configs.templates.dir}/context.xml" toFile="${previews.dir}/context.xml" overwrite="true">
-			<filterset>
-				<filter token="path" value="/previews/output" />
-				<filter token="docbase" value="${remote.previews.output.dir}" />
-			</filterset>
-		</copy>
-		<scp todir="${server.user}@${server.host}:/home/${server.user}" keyfile="${user.home}/.ssh/id_rsa" trust="true" verbose="false" failonerror="false">
-			<fileset dir="${previews.dir}">
-				<filename name="context.xml" />
-			</fileset>
-		</scp>
-		<undeploy failonerror="false" url="http://${server.host}/manager/text" path="/previews/output" username="${tomcat.user}" password="${tomcat.password}" />
-		<deploy url="http://${server.host}/manager/text" config="/home/${server.user}/context.xml" path="/previews/output" username="${tomcat.user}" password="${tomcat.password}" />
-		<delete file="${previews.dir}/context.xml">
-		</delete>
-	</target>
 	<target name="transfer-test-ui" description="Test UI transfer">
-		<replace file="${control-panel-jsfile}" token="http://${local.server.host}:${local.server.port}" value="http://${server.host}" />
-		<replace file="${control-panel-jsfile}" token="https://${local.server.host}:8443" value="https://${server.host}:${remote.ssl.server.port}" />
-		<replace file="${integrated-search-jsfile}" token="http://${local.server.host}:${local.server.port}" value="http://${server.host}" />
-		<scp todir="${server.user}@${server.host}:${remote.test-ui.dir}" keyfile="${user.home}/.ssh/id_rsa" trust="true" verbose="false" failonerror="false">
+		<replace file="${control-panel-jsfile}"
+			token="http://${local.server.host}:${local.server.port}" value="http://${server.host}" />
+		<replace file="${control-panel-jsfile}" token="https://${local.server.host}:8443"
+			value="https://${server.host}:${remote.ssl.server.port}" />
+		<replace file="${integrated-search-jsfile}"
+			token="http://${local.server.host}:${local.server.port}" value="http://${server.host}" />
+		<scp todir="${server.user}@${server.host}:${remote.test-ui.dir}"
+			keyfile="${user.home}/.ssh/id_rsa" trust="true" verbose="false"
+			failonerror="false">
 			<fileset dir="${local.test-ui.dir}">
 			</fileset>
 		</scp>
-		<replace file="${control-panel-jsfile}" value="https://${server.host}:${remote.ssl.server.port}" token="https://${local.server.host}:8443" />
-		<replace file="${control-panel-jsfile}" value="http://${local.server.host}:${local.server.port}" token="http://${server.host}" />
-		<replace file="${integrated-search-jsfile}" value="http://${local.server.host}:${local.server.port}" token="http://${server.host}" />
+		<replace file="${control-panel-jsfile}"
+			value="https://${server.host}:${remote.ssl.server.port}" token="https://${local.server.host}:8443" />
+		<replace file="${control-panel-jsfile}"
+			value="http://${local.server.host}:${local.server.port}" token="http://${server.host}" />
+		<replace file="${integrated-search-jsfile}"
+			value="http://${local.server.host}:${local.server.port}" token="http://${server.host}" />
 	</target>
 </project>
