@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Context docBase="C:\ApiScol\Apps\previews.war" path="/previews" >
+		<Environment description="nom de l'instance ApiScol" name="apiscol_instance_name" type="java.lang.String"
+						value="apiscol-dev-test-win" override="true" /> 
+        <Environment description="label	 de l'instance ApiScol" name="apiscol_instance_label" type="java.lang.String"
+						value="Apiscol de développement - test windows" override="true" />
+		<Environment description="chemin absolu du répertoire des fichiers entrants" name="file_repo_path" type="java.lang.String"
+						value="C:\ApiScol\Depot\conversions\input" override="true" />
+		<Environment description="chemin absolu du répertoire des fichiers sortants" name="previews_repo_path" type="java.lang.String"
+						value="C:\ApiScol\Depot\conversions\output" override="true" />
+</Context>

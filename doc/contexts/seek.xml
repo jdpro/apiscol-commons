@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Context docBase="C:\ApiScol\Apps\seek.war" path="/seek" >
+		<Environment description="nom de l'instance ApiScol" name="apiscol_instance_name" type="java.lang.String"
+						value="apiscol-dev-test-win" override="true" />
+        <Environment description="label	 de l'instance ApiScol" name="apiscol_instance_label" type="java.lang.String"
+						value="Apiscol de développement - test windows" override="true" />
+		<Environment description="" name="content_webservice_url" type="java.lang.String"
+						value="http://apiscol:8080/content" override="true" />
+		<Environment description="" name="metadata_webservice_url" type="java.lang.String"
+						value="http://apiscol:8080/meta" override="true" />
+		<Environment description="" name="thumbs_webservice_url" type="java.lang.String"
+						value="http://apiscol:8080/thumbs" override="true" />
+</Context>

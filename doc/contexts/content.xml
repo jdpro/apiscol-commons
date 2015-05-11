@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Context docBase="C:\ApiScol\Apps\content.war" path="/content" >
+		<Environment description="nom de l'instance ApiScol" name="apiscol_instance_name" type="java.lang.String"
+						value="apiscol-dev-test-win" override="true" />
+        <Environment description="label	 de l'instance ApiScol" name="apiscol_instance_label" type="java.lang.String"
+						value="Apiscol de développement - test windows" override="true" />
+        <Environment description="adresse de solr / coeur ressources" name="solr_address" type="java.lang.String"
+						value="http://apiscol:8080/solr/apiscol-resources" override="true" />
+		<Environment description="adresse du service de génération des prévisualisations" name="conversion_webservice_url" type="java.lang.String"
+						value="http://apiscol:8080/previews" override="true" />
+		<Environment description="chemin absolu du répertoire de stockage des fichiers de ressources" name="file_repo_path" type="java.lang.String"
+						value="C:\ApiScol\Depot\resources" override="true" />
+		<Environment description="chemin absolu du répertoire de stockage des fichiers de prévisualisation" name="previews_repo_path" type="java.lang.String"
+						value="C:\ApiScol\Depot\previews" override="true" />
+</Context>
