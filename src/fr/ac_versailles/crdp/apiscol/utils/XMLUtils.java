@@ -1,5 +1,6 @@
 package fr.ac_versailles.crdp.apiscol.utils;
 
+import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -71,19 +72,19 @@ public class XMLUtils {
 		return doc;
 	}
 
-	public static Node xsltTransform(String styleSheetPath, Document response) {
-		return xsltTransform(styleSheetPath, response,
+	public static Node xsltTransform(InputStream styleSheet, Document response) {
+		return xsltTransform(styleSheet, response,
 				new HashMap<String, String>());
 	}
 
-	public static Node xsltTransform(String styleSheetPath, Document response,
+	public static Node xsltTransform(InputStream styleSheet, Document response,
 			Map<String, String> params) {
 		TransformerFactory tFactory = TransformerFactory.newInstance();
 		Transformer transformer = null;
 		try {
-			transformer = tFactory
-					.newTransformer(new javax.xml.transform.stream.StreamSource(
-							styleSheetPath));
+			javax.xml.transform.stream.StreamSource streamSource = new javax.xml.transform.stream.StreamSource(
+					styleSheet);
+			transformer = tFactory.newTransformer(streamSource);
 		} catch (TransformerConfigurationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

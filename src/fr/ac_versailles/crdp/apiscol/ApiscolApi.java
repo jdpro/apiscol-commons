@@ -142,8 +142,4 @@ public class ApiscolApi {
 			return RequestHandler.convertFormatQueryParam(format);
 	}
 
-	protected String realPath(ServletContext context) {
-		return context.getRealPath("");
-	}
-
 }
